@@ -126,10 +126,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {/* 2. Gemini Settings (Shown or highlighted) */}
             {engine === 'gemini' && (
               <div className="setting-section gemini-settings-box">
-                <label className="section-label">
-                  <Key size={14} />
-                  <span>Gemini API 키 설정</span>
-                </label>
+                <div className="gemini-box-header">
+                  <label className="section-label">
+                    <Key size={14} />
+                    <span>Gemini API 키 설정</span>
+                  </label>
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="get-api-key-link"
+                    title="Google AI Studio에서 10초 만에 무료 API Key 발급받기"
+                  >
+                    <span>무료 API 키 발급받기 ↗</span>
+                  </a>
+                </div>
                 <div className="input-with-actions">
                   <input
                     type={showKey ? 'text' : 'password'}

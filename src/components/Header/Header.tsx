@@ -30,7 +30,6 @@ interface HeaderProps {
   sourceLang: SupportedLang;
   targetLang: TargetLang;
   fontScale: number;
-  canInstallPWA: boolean;
   onInstallPWA: () => void;
   onToggleTheme: () => void;
   onChangeViewMode: (mode: ViewMode) => void;
@@ -51,7 +50,6 @@ export const Header: React.FC<HeaderProps> = ({
   sourceLang,
   targetLang,
   fontScale,
-  canInstallPWA,
   onInstallPWA,
   onToggleTheme,
   onChangeViewMode,
@@ -124,18 +122,16 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Controls */}
       <div className="header-status-group">
-        {/* PWA Desktop App Install Button */}
-        {canInstallPWA && (
-          <button
-            type="button"
-            className="header-btn pwa-install-btn"
-            onClick={onInstallPWA}
-            title="바탕화면에 독립 실행 앱으로 바로가기 설치"
-          >
-            <Download size={16} className="pwa-icon" />
-            <span className="btn-label">바탕화면 앱 설치</span>
-          </button>
-        )}
+        {/* PWA Desktop/Mobile App Install Button */}
+        <button
+          type="button"
+          className="header-btn pwa-install-btn"
+          onClick={onInstallPWA}
+          title="바탕화면 또는 홈 화면에 독립 실행 앱으로 설치"
+        >
+          <Download size={15} className="pwa-icon" />
+          <span className="btn-label">앱 설치 (PWA)</span>
+        </button>
 
         {/* View Mode Segmented Controls */}
         <div className="view-mode-segmented">

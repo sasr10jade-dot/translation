@@ -657,15 +657,40 @@
 }
 
 /* Responsive */
-@media (max-width: 960px) {
+@media (max-width: 900px) {
+  .workspace-container {
+    padding: 0.65rem 0.5rem 2rem !important;
+    height: auto !important;
+  }
   .workspace-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+    height: auto !important;
   }
-  .workspace-divider {
-    flex-direction: row;
-    padding: 0.5rem 0;
+  .workspace-panel {
+    padding: 1rem 1.15rem !important;
+    height: auto !important;
+    min-height: 280px;
   }
-  .divider-label {
-    writing-mode: horizontal-tb;
+  .text-input {
+    min-height: 140px !important;
+    font-size: 1.15rem !important;
+  }
+  .output-body {
+    min-height: 160px !important;
+  }
+  .translated-text-display.font-large .korean-text {
+    font-size: 1.55rem !important;
+  }
+  .speech-lang-toggle-btn {
+    padding: 0.25rem 0.55rem;
+    font-size: 0.72rem;
+  }
+  .mic-toggle-btn {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.78rem;
+  }
+  .counter-group .mic-listening-guide {
+    display: none;
   }
 }

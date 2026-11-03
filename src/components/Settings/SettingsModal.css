@@ -160,6 +160,26 @@
   padding: 1rem;
 }
 
+.gemini-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.get-api-key-link {
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 1px dotted var(--accent-cyan);
+}
+
+.get-api-key-link:hover {
+  color: #ffffff;
+  border-bottom-style: solid;
+}
+
 .input-with-actions {
   display: flex;
   align-items: center;

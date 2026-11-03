@@ -56,7 +56,6 @@ export function App() {
 
   // PWA Install state
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [canInstallPWA, setCanInstallPWA] = useState(false);
 
   // Services instances
   const visualizerService = useMemo(() => new AudioVisualizerService(), []);
@@ -107,15 +106,9 @@ export function App() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setCanInstallPWA(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    // 이미 독립 창(PWA)으로 실행 중인지 확인
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setCanInstallPWA(false);
-    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -128,11 +121,16 @@ export function App() {
       const choiceResult = await deferredPrompt.userChoice;
       if (choiceResult.outcome === 'accepted') {
         showToast('바탕화면에 앱이 성공적으로 설치되었습니다!');
-        setCanInstallPWA(false);
       }
       setDeferredPrompt(null);
     } else {
-      showToast('브라우저 주소창 우측 상단의 [설치] 또는 [바로가기 추가] 아이콘을 클릭해 주세요.');
+      // 기기별 설치 안내
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS) {
+        showToast('아이폰: 하단 공유(사각형 화살표) 버튼 ➔ [홈 화면에 추가]를 눌러주세요.');
+      } else {
+        showToast('브라우저 메뉴(⋮) ➔ [홈 화면에 추가] 또는 주소창 우측 [설치]를 눌러주세요.');
+      }
     }
   };
 
@@ -460,7 +458,6 @@ export function App() {
         sourceLang={sourceLang}
         targetLang={targetLang}
         fontScale={fontScale}
-        canInstallPWA={canInstallPWA}
         onInstallPWA={handleInstallPWA}
         onToggleTheme={handleToggleTheme}
         onChangeViewMode={(mode) => setViewMode(mode)}

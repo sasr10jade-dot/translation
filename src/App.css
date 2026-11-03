@@ -2,7 +2,9 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   overflow: hidden;
   position: relative;
 }
@@ -11,10 +13,25 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 72px);
+  height: calc(100vh - 68px);
+  height: calc(100dvh - 68px);
   padding: 0;
   width: 100%;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+  }
+  .main-content {
+    height: auto;
+    overflow: visible;
+    padding-bottom: 2rem;
+  }
 }
 
 /* Toast Notification */
