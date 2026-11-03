@@ -4,12 +4,15 @@ import { DualWorkspace } from './components/Workspace/DualWorkspace';
 import { HistoryList } from './components/History/HistoryList';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { MeetingHUD } from './components/MeetingHUD/MeetingHUD';
+import { MeetingStream } from './components/MeetingStream/MeetingStream';
+import { MeetingSummaryModal } from './components/MeetingSummaryModal/MeetingSummaryModal';
 import { AudioGuideModal } from './components/AudioGuide/AudioGuideModal';
 import { PWAInstallModal } from './components/PWAInstallModal/PWAInstallModal';
 import { MobileBottomBar } from './components/MobileBottomBar/MobileBottomBar';
 import { SpeechRecognitionService } from './services/speechRecognition';
 import { AudioVisualizerService } from './services/audioVisualizer';
 import { SpeechSynthesizerService } from './services/speechSynthesizer';
+import { PipSubtitleService } from './services/pipSubtitle';
 import { translationManager } from './services/translation';
 import { StorageService } from './services/storage';
 import { detectLanguage } from './utils/langDetect';
@@ -21,7 +24,7 @@ export function App() {
   const [settings, setSettings] = useState<AppSettings>(() => StorageService.getSettings());
   const [records, setRecords] = useState<TranslationRecord[]>(() => StorageService.getHistory());
 
-  // View Mode: 'normal' (default), 'wide', 'hud'
+  // View Mode: 'normal' (default), 'wide', 'hud', 'stream'
   const [viewMode, setViewMode] = useState<ViewMode>(settings.defaultViewMode || 'normal');
 
   // Font Scale state (0.8 ~ 1.5)
@@ -55,6 +58,8 @@ export function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showAudioGuide, setShowAudioGuide] = useState(false);
   const [showPWAModal, setShowPWAModal] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [isPipActive, setIsPipActive] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   // PWA Install state
@@ -72,6 +77,14 @@ export function App() {
 
   // Keep latest reference to executeTranslation to prevent speech recognition teardown
   const executeTranslationRef = useRef<any>(null);
+
+  // Update PIP Subtitle when text changes
+  useEffect(() => {
+    PipSubtitleService.getInstance().updateSubtitle(
+      sourceText + (interimText ? ` (${interimText})` : ''),
+      translatedText
+    );
+  }, [sourceText, interimText, translatedText]);
 
   // Theme effect & handler
   useEffect(() => {
@@ -323,11 +336,10 @@ export function App() {
 
       const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
-      // [핵심 모바일 패치]: 모바일에서는 SpeechRecognition을 먼저 시작해야 마이크 점유 충돌이 발생하지 않음
+      // 모바일에서는 SpeechRecognition을 먼저 시작해야 마이크 점유 충돌이 발생하지 않음
       const recStarted = recognitionRef.current?.start();
       if (recStarted) {
         setIsListening(true);
-        // PC 데스크톱인 경우에만 캔버스 파형 스트림을 병행 실행 (모바일 마이크 충돌 방지)
         if (!isMobile) {
           visualizerService.start().catch(() => {});
         }
@@ -335,6 +347,71 @@ export function App() {
         showToast('마이크를 시작하지 못했습니다. 브라우저의 마이크 권한을 확인해 주세요.');
       }
     }
+  };
+
+  // Push-to-Talk (Spacebar) & Global Keyboard Shortcuts
+  useEffect(() => {
+    let spacePressed = false;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeTag = document.activeElement?.tagName.toLowerCase();
+      const isInputFocused = activeTag === 'input' || activeTag === 'textarea';
+
+      // 1. Push-to-Talk (Spacebar): 설정이 켜져 있고 입력 포커스가 아닐 때
+      if (settings.pushToTalk && e.code === 'Space' && !isInputFocused) {
+        e.preventDefault();
+        if (!spacePressed && !isListening) {
+          spacePressed = true;
+          handleToggleMic();
+          showToast('🎙️ 무전기(PTT): 말씀해 주세요...');
+        }
+      }
+
+      // 2. Ctrl + Shift + S: 언어 방향 즉시 스왑
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyS') {
+        e.preventDefault();
+        handleSwapLanguages();
+      }
+
+      // 3. Ctrl + Shift + C: 번역문 즉시 복사
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyC') {
+        e.preventDefault();
+        if (translatedText) {
+          navigator.clipboard.writeText(translatedText).then(() => {
+            showToast('번역 결과가 복사되었습니다!');
+          });
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (settings.pushToTalk && e.code === 'Space' && spacePressed) {
+        spacePressed = false;
+        if (isListening) {
+          handleToggleMic();
+          showToast('무전기 완료 ➔ 번역 생성');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [settings.pushToTalk, isListening, translatedText]);
+
+  // Toggle Chrome Picture-in-Picture Subtitle
+  const handleTogglePip = async () => {
+    const pip = PipSubtitleService.getInstance();
+    if (!pip.isSupported()) {
+      showToast('현재 브라우저에서는 PIP 기능을 지원하지 않습니다. Chrome/Edge를 권장합니다.');
+      return;
+    }
+    const active = await pip.togglePip();
+    setIsPipActive(active);
+    showToast(active ? '화면 최상단 PIP 플로팅 자막이 열렸습니다!' : 'PIP 자막이 닫혔습니다.');
   };
 
   // Text Change Handler with Auto-Detection & Debounce
@@ -459,8 +536,10 @@ export function App() {
         sourceLang={sourceLang}
         targetLang={targetLang}
         fontScale={fontScale}
+        isPipActive={isPipActive}
         onInstallPWA={handleInstallPWA}
         onToggleTheme={handleToggleTheme}
+        onTogglePip={handleTogglePip}
         onChangeViewMode={(mode) => setViewMode(mode)}
         onChangeFontScale={handleChangeFontScale}
         onSwapLanguages={handleSwapLanguages}
@@ -469,8 +548,8 @@ export function App() {
         onOpenAudioGuide={() => setShowAudioGuide(true)}
       />
 
-      {/* Main Dual Workspace: displayed in normal and wide modes */}
-      {viewMode !== 'hud' && (
+      {/* Main Workspace (displayed in normal & wide modes) */}
+      {(viewMode === 'normal' || viewMode === 'wide') && (
         <main className="main-content">
           <DualWorkspace
             sourceLang={sourceLang}
@@ -500,6 +579,30 @@ export function App() {
             onStopSpeak={handleStopSpeak}
             isSpeaking={isSpeaking}
             onRetry={() => executeTranslation(sourceText, sourceLang, targetLang, 'text')}
+          />
+        </main>
+      )}
+
+      {/* Meeting Stream Mode (Messenger Style Timeline) */}
+      {viewMode === 'stream' && (
+        <main className="main-content stream-main">
+          <MeetingStream
+            records={records}
+            sourceText={sourceText}
+            interimText={interimText}
+            translatedText={translatedText}
+            status={status}
+            isListening={isListening}
+            sourceLang={sourceLang}
+            targetLang={targetLang}
+            speechLang={speechLang}
+            onToggleMic={handleToggleMic}
+            onToggleSpeechLang={handleToggleSpeechLang}
+            onTextChange={handleTextChange}
+            onSendText={(text) => executeTranslation(text, sourceLang, targetLang, 'text')}
+            onSpeak={handleSpeak}
+            onOpenSummary={() => setShowSummaryModal(true)}
+            onExport={handleExportHistory}
           />
         </main>
       )}
@@ -555,6 +658,14 @@ export function App() {
         deferredPrompt={deferredPrompt}
         onClose={() => setShowPWAModal(false)}
         onDirectPrompt={handleDirectPWAPrompt}
+      />
+
+      {/* AI Meeting Summary & Action Items Modal */}
+      <MeetingSummaryModal
+        isOpen={showSummaryModal}
+        records={records}
+        settings={settings}
+        onClose={() => setShowSummaryModal(false)}
       />
 
       {/* Mobile Bottom Floating Action Bar */}

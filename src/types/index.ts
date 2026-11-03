@@ -4,8 +4,21 @@ export type InputMode = 'mic' | 'text';
 export type TranslationStatus = 'idle' | 'translating' | 'success' | 'error';
 export type SupportedLang = 'en' | 'ko' | 'auto';
 export type TargetLang = 'en' | 'ko';
-export type ViewMode = 'normal' | 'wide' | 'hud';
+export type ViewMode = 'normal' | 'wide' | 'hud' | 'stream';
 export type AppTheme = 'dark' | 'light';
+
+export interface GlossaryItem {
+  id: string;
+  sourceWord: string;
+  targetWord: string;
+  enabled: boolean;
+}
+
+export interface MeetingSummary {
+  keyPoints: string[];
+  actionItems: string[];
+  createdAt: number;
+}
 
 export interface TranslationRecord {
   id: string;
@@ -31,7 +44,9 @@ export interface AppSettings {
   continuousListening: boolean;
   debounceMs: number; // 텍스트 입력 번역 디바운스
   defaultViewMode: ViewMode;
-  fontScale: number; // 0.85 ~ 1.4 (폰트 배율)
+  fontScale: number; // 0.85 ~ 1.5
+  pushToTalk: boolean; // Spacebar 무전기 모드
+  glossary: GlossaryItem[]; // 커스텀 전문 용어 사전
 }
 
 export interface AudioVisualizerState {

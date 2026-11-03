@@ -1,0 +1,152 @@
+.summary-dialog {
+  max-width: 680px;
+}
+
+.summary-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  gap: 1rem;
+}
+
+.summary-loading-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.summary-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.summary-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summary-card.action-card {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.card-subtitle-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.subtitle-icon {
+  color: var(--accent-cyan);
+}
+
+.subtitle-icon.check-color {
+  color: var(--color-success);
+}
+
+.card-subtitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.key-points-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.point-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.point-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.point-text {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.action-items-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  color: #f1f5f9;
+}
+
+.action-chk {
+  accent-color: var(--color-success);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.action-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+.summary-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-right-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Light Theme Overrides */
+[data-theme='light'] .summary-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .card-subtitle {
+  color: #090d16;
+}
+
+[data-theme='light'] .point-text {
+  color: #090d16;
+}
+
+[data-theme='light'] .action-item {
+  color: #090d16;
+}

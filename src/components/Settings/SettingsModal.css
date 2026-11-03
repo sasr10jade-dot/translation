@@ -412,6 +412,89 @@ input:checked + .switch-slider:before {
   cursor: pointer;
 }
 
+/* Custom Glossary Styles */
+.setting-sub-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: -0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.glossary-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.glossary-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  border: 1px solid var(--panel-border);
+}
+
+.glossary-checkbox {
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+}
+
+.glossary-src {
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.glossary-arrow {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.glossary-tgt {
+  color: #6ee7b7;
+  font-weight: 600;
+  flex: 1;
+}
+
+.glossary-del-btn {
+  color: var(--text-muted);
+  padding: 2px;
+}
+
+.glossary-del-btn:hover {
+  color: #f87171;
+}
+
+.glossary-add-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.glossary-input {
+  flex: 1;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+.glossary-add-btn {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--accent-primary);
+  color: #fff;
+  border-radius: var(--radius-sm);
+}
+
+.glossary-add-btn:hover {
+  background: var(--accent-primary-hover);
+}
+
 /* Modal Footer */
 .modal-footer {
   display: flex;

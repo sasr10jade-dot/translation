@@ -218,17 +218,35 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            {/* 4. Audio & TTS Settings */}
+            {/* 4. Audio & Push-to-Talk Settings */}
             <div className="setting-section">
               <label className="section-label">
                 <Volume2 size={14} />
-                <span>음성 및 음성 읽기(TTS) 옵션</span>
+                <span>음성 및 무전기(PTT) 모드</span>
               </label>
+
+              {/* Push-to-Talk Mode Switch */}
+              <div className="toggle-row">
+                <div className="toggle-info">
+                  <span className="toggle-title">무전기 모드 (Push-to-Talk)</span>
+                  <span className="toggle-desc">
+                    키보드 <strong>Spacebar</strong>를 누르고 있는 동안에만 마이크가 켜지고, 손을 떼면 즉시 번역됩니다.
+                  </span>
+                </div>
+                <label className="switch-wrapper">
+                  <input
+                    type="checkbox"
+                    checked={settings.pushToTalk}
+                    onChange={(e) => onSave({ ...settings, pushToTalk: e.target.checked })}
+                  />
+                  <span className="switch-slider"></span>
+                </label>
+              </div>
 
               <div className="toggle-row">
                 <div className="toggle-info">
                   <span className="toggle-title">번역 완료 시 자동 읽기 (Auto TTS)</span>
-                  <span className="toggle-desc">새로운 문장 번역이 완료되면 자동으로 한국어 발음을 들려줍니다.</span>
+                  <span className="toggle-desc">새로운 문장 번역이 완료되면 자동으로 한국어/영어 발음을 들려줍니다.</span>
                 </div>
                 <label className="switch-wrapper">
                   <input
@@ -242,7 +260,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
               <div className="slider-row">
                 <div className="slider-label-group">
-                  <span className="slider-label">한국어 음성 읽기 속도</span>
+                  <span className="slider-label">음성 읽기 속도</span>
                   <span className="slider-value">{ttsVoiceRate.toFixed(1)}x</span>
                 </div>
                 <input
@@ -254,6 +272,89 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   onChange={(e) => setTtsVoiceRate(parseFloat(e.target.value))}
                   className="range-slider"
                 />
+              </div>
+            </div>
+
+            {/* 5. Custom Glossary (전문 용어 사전) */}
+            <div className="setting-section">
+              <label className="section-label">
+                <span>사내/업무 맞춤 전문 용어 사전 (Glossary)</span>
+              </label>
+              <p className="setting-sub-desc">
+                자주 오번역되는 고유명사나 사내 약어를 등록하면, 번역 시 지정된 단어로 100% 자동 치환됩니다.
+              </p>
+
+              <div className="glossary-items-list">
+                {(settings.glossary || []).map((item) => (
+                  <div key={item.id} className="glossary-row">
+                    <input
+                      type="checkbox"
+                      checked={item.enabled}
+                      onChange={(e) => {
+                        const updated = settings.glossary.map((g) =>
+                          g.id === item.id ? { ...g, enabled: e.target.checked } : g
+                        );
+                        onSave({ ...settings, glossary: updated });
+                      }}
+                      className="glossary-checkbox"
+                      title="적용 여부"
+                    />
+                    <span className="glossary-src">{item.sourceWord}</span>
+                    <span className="glossary-arrow">➔</span>
+                    <span className="glossary-tgt">{item.targetWord}</span>
+                    <button
+                      type="button"
+                      className="glossary-del-btn"
+                      onClick={() => {
+                        const updated = settings.glossary.filter((g) => g.id !== item.id);
+                        onSave({ ...settings, glossary: updated });
+                      }}
+                      title="용어 삭제"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add New Word to Glossary */}
+              <div className="glossary-add-row">
+                <input
+                  type="text"
+                  placeholder="원문 단어 (예: K8s, PR)"
+                  id="new-glossary-src"
+                  className="glossary-input"
+                />
+                <input
+                  type="text"
+                  placeholder="대체 단어 (예: 쿠버네티스)"
+                  id="new-glossary-tgt"
+                  className="glossary-input"
+                />
+                <button
+                  type="button"
+                  className="glossary-add-btn"
+                  onClick={() => {
+                    const srcInput = document.getElementById('new-glossary-src') as HTMLInputElement;
+                    const tgtInput = document.getElementById('new-glossary-tgt') as HTMLInputElement;
+                    if (srcInput && tgtInput && srcInput.value.trim() && tgtInput.value.trim()) {
+                      const newItem = {
+                        id: Date.now().toString(),
+                        sourceWord: srcInput.value.trim(),
+                        targetWord: tgtInput.value.trim(),
+                        enabled: true,
+                      };
+                      onSave({
+                        ...settings,
+                        glossary: [...(settings.glossary || []), newItem],
+                      });
+                      srcInput.value = '';
+                      tgtInput.value = '';
+                    }
+                  }}
+                >
+                  추가
+                </button>
               </div>
             </div>
           </div>

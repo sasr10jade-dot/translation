@@ -14,6 +14,8 @@ import {
   ArrowLeftRight,
   LayoutTemplate,
   Columns2,
+  MessagesSquare,
+  PictureInPicture2,
   Sun,
   Moon,
 } from 'lucide-react';
@@ -30,8 +32,10 @@ interface HeaderProps {
   sourceLang: SupportedLang;
   targetLang: TargetLang;
   fontScale: number;
+  isPipActive: boolean;
   onInstallPWA: () => void;
   onToggleTheme: () => void;
+  onTogglePip: () => void;
   onChangeViewMode: (mode: ViewMode) => void;
   onChangeFontScale: (delta: number) => void;
   onSwapLanguages: () => void;
@@ -50,8 +54,10 @@ export const Header: React.FC<HeaderProps> = ({
   sourceLang,
   targetLang,
   fontScale,
+  isPipActive,
   onInstallPWA,
   onToggleTheme,
+  onTogglePip,
   onChangeViewMode,
   onChangeFontScale,
   onSwapLanguages,
@@ -141,7 +147,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onChangeViewMode('normal')}
             title="기본 일반 모드"
           >
-            <LayoutTemplate size={15} />
+            <LayoutTemplate size={14} />
             <span>일반</span>
           </button>
           <button
@@ -150,8 +156,17 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onChangeViewMode('wide')}
             title="대형 50:50 분할 모드"
           >
-            <Columns2 size={15} />
+            <Columns2 size={14} />
             <span>대형 50:50</span>
+          </button>
+          <button
+            type="button"
+            className={`mode-tab ${viewMode === 'stream' ? 'active' : ''}`}
+            onClick={() => onChangeViewMode('stream')}
+            title="카카오톡/슬랙 스타일 회의 롤링 대화 피드"
+          >
+            <MessagesSquare size={14} />
+            <span>스트림</span>
           </button>
           <button
             type="button"
@@ -159,10 +174,21 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onChangeViewMode('hud')}
             title="화상 회의용 플로팅 자막 HUD"
           >
-            <Tv size={15} />
+            <Tv size={14} />
             <span>자막 HUD</span>
           </button>
         </div>
+
+        {/* Chrome Picture-in-Picture Floating Subtitle Button */}
+        <button
+          type="button"
+          className={`header-btn pip-btn ${isPipActive ? 'active' : ''}`}
+          onClick={onTogglePip}
+          title="Zoom이나 PPT 다른 창 위에도 항상 떠있는 PIP 플로팅 자막"
+        >
+          <PictureInPicture2 size={16} />
+          <span className="btn-label">PIP 자막</span>
+        </button>
 
         {/* Font Scale Adjuster */}
         <div className="font-scale-control" title="전체 폰트 크기 확대/축소">
