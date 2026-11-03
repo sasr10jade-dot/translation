@@ -5,6 +5,7 @@ import { HistoryList } from './components/History/HistoryList';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { MeetingHUD } from './components/MeetingHUD/MeetingHUD';
 import { AudioGuideModal } from './components/AudioGuide/AudioGuideModal';
+import { PWAInstallModal } from './components/PWAInstallModal/PWAInstallModal';
 import { SpeechRecognitionService } from './services/speechRecognition';
 import { AudioVisualizerService } from './services/audioVisualizer';
 import { SpeechSynthesizerService } from './services/speechSynthesizer';
@@ -52,6 +53,7 @@ export function App() {
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showAudioGuide, setShowAudioGuide] = useState(false);
+  const [showPWAModal, setShowPWAModal] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   // PWA Install state
@@ -115,7 +117,11 @@ export function App() {
     };
   }, []);
 
-  const handleInstallPWA = async () => {
+  const handleInstallPWA = () => {
+    setShowPWAModal(true);
+  };
+
+  const handleDirectPWAPrompt = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const choiceResult = await deferredPrompt.userChoice;
@@ -123,14 +129,7 @@ export function App() {
         showToast('바탕화면에 앱이 성공적으로 설치되었습니다!');
       }
       setDeferredPrompt(null);
-    } else {
-      // 기기별 설치 안내
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      if (isIOS) {
-        showToast('아이폰: 하단 공유(사각형 화살표) 버튼 ➔ [홈 화면에 추가]를 눌러주세요.');
-      } else {
-        showToast('브라우저 메뉴(⋮) ➔ [홈 화면에 추가] 또는 주소창 우측 [설치]를 눌러주세요.');
-      }
+      setShowPWAModal(false);
     }
   };
 
@@ -546,6 +545,14 @@ export function App() {
       <AudioGuideModal
         isOpen={showAudioGuide}
         onClose={() => setShowAudioGuide(false)}
+      />
+
+      {/* PWA Install & Shortcut Modal */}
+      <PWAInstallModal
+        isOpen={showPWAModal}
+        deferredPrompt={deferredPrompt}
+        onClose={() => setShowPWAModal(false)}
+        onDirectPrompt={handleDirectPWAPrompt}
       />
 
       {/* Toast Notification */}
