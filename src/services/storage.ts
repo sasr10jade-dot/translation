@@ -3,9 +3,11 @@ import { AppSettings, TranslationRecord } from '../types';
 const SETTINGS_KEY = 'livelingua_settings_v1';
 const HISTORY_KEY = 'livelingua_history_v1';
 
+const ENV_API_KEY = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+
 export const DEFAULT_SETTINGS: AppSettings = {
-  engine: 'free',
-  geminiApiKey: '',
+  engine: ENV_API_KEY ? 'gemini' : 'free',
+  geminiApiKey: ENV_API_KEY,
   geminiModel: 'gemini-1.5-flash',
   tone: 'natural',
   autoTts: false,
