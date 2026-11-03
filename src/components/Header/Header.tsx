@@ -14,12 +14,15 @@ import {
   ArrowLeftRight,
   LayoutTemplate,
   Columns2,
+  Sun,
+  Moon,
 } from 'lucide-react';
-import { AppSettings, SupportedLang, TargetLang, ViewMode } from '../../types';
+import { AppSettings, AppTheme, SupportedLang, TargetLang, ViewMode } from '../../types';
 import './Header.css';
 
 interface HeaderProps {
   settings: AppSettings;
+  theme: AppTheme;
   isListening: boolean;
   historyCount: number;
   showHistory: boolean;
@@ -29,6 +32,7 @@ interface HeaderProps {
   fontScale: number;
   canInstallPWA: boolean;
   onInstallPWA: () => void;
+  onToggleTheme: () => void;
   onChangeViewMode: (mode: ViewMode) => void;
   onChangeFontScale: (delta: number) => void;
   onSwapLanguages: () => void;
@@ -39,6 +43,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   settings,
+  theme,
   isListening,
   historyCount,
   showHistory,
@@ -48,6 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
   fontScale,
   canInstallPWA,
   onInstallPWA,
+  onToggleTheme,
   onChangeViewMode,
   onChangeFontScale,
   onSwapLanguages,
@@ -184,6 +190,16 @@ export const Header: React.FC<HeaderProps> = ({
             A+
           </button>
         </div>
+
+        {/* Theme Toggle Button */}
+        <button
+          type="button"
+          className="header-btn theme-toggle-btn"
+          onClick={onToggleTheme}
+          title={theme === 'dark' ? '일반 밝은 모드로 전환 (라이트 테마)' : '다크 모드로 전환'}
+        >
+          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
 
         {/* Fullscreen Button */}
         <button

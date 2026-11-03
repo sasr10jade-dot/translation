@@ -236,6 +236,16 @@
   text-align: center;
 }
 
+.header-btn.theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fbbf24;
+}
+
+.header-btn.theme-toggle-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fef08a;
+}
+
 /* Header Buttons */
 .header-btn {
   display: flex;

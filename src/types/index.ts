@@ -5,6 +5,7 @@ export type TranslationStatus = 'idle' | 'translating' | 'success' | 'error';
 export type SupportedLang = 'en' | 'ko' | 'auto';
 export type TargetLang = 'en' | 'ko';
 export type ViewMode = 'normal' | 'wide' | 'hud';
+export type AppTheme = 'dark' | 'light';
 
 export interface TranslationRecord {
   id: string;

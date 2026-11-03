@@ -11,7 +11,7 @@ import { SpeechSynthesizerService } from './services/speechSynthesizer';
 import { translationManager } from './services/translation';
 import { StorageService } from './services/storage';
 import { detectLanguage } from './utils/langDetect';
-import { AppSettings, SupportedLang, TargetLang, TranslationRecord, TranslationStatus, ViewMode } from './types';
+import { AppSettings, AppTheme, SupportedLang, TargetLang, TranslationRecord, TranslationStatus, ViewMode } from './types';
 import './App.css';
 
 export function App() {
@@ -24,6 +24,11 @@ export function App() {
 
   // Font Scale state (0.8 ~ 1.5)
   const [fontScale, setFontScale] = useState<number>(settings.fontScale || 1.0);
+
+  // Theme state ('dark' | 'light')
+  const [theme, setTheme] = useState<AppTheme>(() => {
+    return (localStorage.getItem('livelingua_theme_v1') as AppTheme) || 'dark';
+  });
 
   // Language Direction state
   const [sourceLang, setSourceLang] = useState<SupportedLang>('auto');
@@ -62,6 +67,18 @@ export function App() {
   const debounceTimerRef = useRef<any>(null);
   const currentRequestIdRef = useRef<number>(0);
   const lastTranslatedTextRef = useRef<string>('');
+
+  // Theme effect & handler
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('livelingua_theme_v1', theme);
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    showToast(next === 'light' ? '일반 밝은 모드(라이트)로 전환되었습니다.' : '다크 모드로 전환되었습니다.');
+  };
 
   // Update global CSS font scale
   useEffect(() => {
@@ -430,6 +447,7 @@ export function App() {
       {/* Top Header */}
       <Header
         settings={settings}
+        theme={theme}
         isListening={isListening}
         historyCount={records.length}
         showHistory={showHistory}
@@ -439,6 +457,7 @@ export function App() {
         fontScale={fontScale}
         canInstallPWA={canInstallPWA}
         onInstallPWA={handleInstallPWA}
+        onToggleTheme={handleToggleTheme}
         onChangeViewMode={(mode) => setViewMode(mode)}
         onChangeFontScale={handleChangeFontScale}
         onSwapLanguages={handleSwapLanguages}
