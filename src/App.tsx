@@ -6,6 +6,7 @@ import { SettingsModal } from './components/Settings/SettingsModal';
 import { MeetingHUD } from './components/MeetingHUD/MeetingHUD';
 import { AudioGuideModal } from './components/AudioGuide/AudioGuideModal';
 import { PWAInstallModal } from './components/PWAInstallModal/PWAInstallModal';
+import { MobileBottomBar } from './components/MobileBottomBar/MobileBottomBar';
 import { SpeechRecognitionService } from './services/speechRecognition';
 import { AudioVisualizerService } from './services/audioVisualizer';
 import { SpeechSynthesizerService } from './services/speechSynthesizer';
@@ -553,6 +554,19 @@ export function App() {
         deferredPrompt={deferredPrompt}
         onClose={() => setShowPWAModal(false)}
         onDirectPrompt={handleDirectPWAPrompt}
+      />
+
+      {/* Mobile Bottom Floating Action Bar */}
+      <MobileBottomBar
+        isListening={isListening}
+        speechLang={speechLang}
+        hasText={!!(sourceText || interimText)}
+        translatedText={translatedText}
+        isSpeaking={isSpeaking}
+        onToggleMic={handleToggleMic}
+        onToggleSpeechLang={handleToggleSpeechLang}
+        onClearText={handleClearText}
+        onSpeak={handleSpeak}
       />
 
       {/* Toast Notification */}

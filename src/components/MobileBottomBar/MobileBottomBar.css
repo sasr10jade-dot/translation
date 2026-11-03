@@ -1,0 +1,141 @@
+/* Mobile Bottom Action Bar (데스크톱에서는 숨김) */
+.mobile-bottom-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: var(--panel-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--panel-border);
+    box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25rem;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  /* 1. Language Toggle Button */
+  .mobile-bar-btn.lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--panel-border);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .mobile-bar-flag {
+    font-size: 1.05rem;
+  }
+
+  .bar-icon-sub {
+    color: var(--accent-cyan);
+  }
+
+  /* 2. Floating Center Mic FAB */
+  .mobile-mic-fab-wrapper {
+    position: relative;
+    top: -12px;
+  }
+
+  .mobile-mic-fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-cyan) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 8px 25px var(--accent-primary-glow), 0 0 0 4px var(--bg-primary);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .mobile-mic-fab:active {
+    transform: scale(0.94);
+  }
+
+  .mobile-mic-fab.active {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 0 30px var(--color-danger-glow), 0 0 0 4px var(--bg-primary);
+  }
+
+  .fab-mic-icon.pulsing {
+    animation: pulseGlow 1.8s infinite;
+  }
+
+  /* 3. Action icons on the right */
+  .mobile-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .mobile-bar-btn.action-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--panel-border);
+    color: var(--text-secondary);
+  }
+
+  .mobile-bar-btn.action-icon:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+  }
+
+  .mobile-bar-btn.action-icon:disabled {
+    opacity: 0.35;
+  }
+
+  .mobile-bar-btn.action-icon.danger:hover:not(:disabled) {
+    background: var(--color-danger-bg);
+    color: #fca5a5;
+  }
+
+  .mobile-bar-btn.action-icon.active {
+    background: rgba(99, 102, 241, 0.25);
+    color: #c7d2fe;
+    border-color: var(--accent-primary);
+  }
+}
+
+/* Light Theme Overrides for Mobile Bottom Bar */
+[data-theme='light'] .mobile-bottom-bar {
+  background: rgba(255, 255, 255, 0.95);
+  border-top-color: #e2e8f0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.07);
+}
+
+[data-theme='light'] .mobile-bar-btn.lang-toggle {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #090d16;
+}
+
+[data-theme='light'] .mobile-mic-fab {
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3), 0 0 0 4px #f8fafc;
+}
+
+[data-theme='light'] .mobile-bar-btn.action-icon {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
