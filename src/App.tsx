@@ -28,6 +28,7 @@ export function App() {
   // Language Direction state
   const [sourceLang, setSourceLang] = useState<SupportedLang>('auto');
   const [targetLang, setTargetLang] = useState<TargetLang>('ko');
+  const [speechLang, setSpeechLang] = useState<'en-US' | 'ko-KR'>('en-US');
 
   // Input & Output Text state
   const [sourceText, setSourceText] = useState('');
@@ -274,6 +275,17 @@ export function App() {
     };
   }, [executeTranslation, showToast, sourceLang, targetLang, visualizerService, synthesizerService]);
 
+  const handleToggleSpeechLang = () => {
+    const next = speechLang === 'ko-KR' ? 'en-US' : 'ko-KR';
+    setSpeechLang(next);
+    recognitionRef.current?.setLang(next);
+    showToast(
+      next === 'ko-KR'
+        ? '마이크가 [🇰🇷 한국어 음성] 청취 모드로 전환되었습니다.'
+        : '마이크가 [🇺🇸 영어 음성] 청취 모드로 전환되었습니다.'
+    );
+  };
+
   // Mic Toggle Handler
   const handleToggleMic = async () => {
     if (isListening) {
@@ -286,8 +298,7 @@ export function App() {
         return;
       }
 
-      // 현재 선택된 언어 적용
-      const speechLang = sourceLang === 'ko' ? 'ko-KR' : 'en-US';
+      // 현재 선택된 음성 언어 적용
       recognitionRef.current?.setLang(speechLang);
 
       const audioStarted = await visualizerService.start();
@@ -442,6 +453,8 @@ export function App() {
           <DualWorkspace
             sourceLang={sourceLang}
             targetLang={targetLang}
+            detectedLang={sourceText.trim() ? detectLanguage(sourceText) : (speechLang === 'ko-KR' ? 'ko' : 'en')}
+            speechLang={speechLang}
             viewMode={viewMode}
             sourceText={sourceText}
             interimText={interimText}
@@ -451,6 +464,7 @@ export function App() {
             onVolumeChange={setVolume}
             onTextChange={handleTextChange}
             onToggleMic={handleToggleMic}
+            onToggleSpeechLang={handleToggleSpeechLang}
             onClearText={handleClearText}
             onSelectPrompt={handleSelectPrompt}
             onPasteClipboard={handlePasteClipboard}

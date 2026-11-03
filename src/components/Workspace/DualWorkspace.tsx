@@ -9,6 +9,8 @@ interface DualWorkspaceProps {
   // Lang props
   sourceLang: SupportedLang;
   targetLang: TargetLang;
+  detectedLang: 'ko' | 'en';
+  speechLang: 'ko-KR' | 'en-US';
   viewMode: ViewMode;
 
   // Input props
@@ -20,6 +22,7 @@ interface DualWorkspaceProps {
   onVolumeChange?: (volume: number) => void;
   onTextChange: (newText: string) => void;
   onToggleMic: () => void;
+  onToggleSpeechLang: () => void;
   onClearText: () => void;
   onSelectPrompt: (promptText: string) => void;
   onPasteClipboard: () => void;
@@ -40,6 +43,8 @@ interface DualWorkspaceProps {
 export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
   sourceLang,
   targetLang,
+  detectedLang,
+  speechLang,
   viewMode,
   sourceText,
   interimText,
@@ -49,6 +54,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
   onVolumeChange,
   onTextChange,
   onToggleMic,
+  onToggleSpeechLang,
   onClearText,
   onSelectPrompt,
   onPasteClipboard,
@@ -72,12 +78,15 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
           interimText={interimText}
           sourceLang={sourceLang}
           targetLang={targetLang}
+          detectedLang={detectedLang}
+          speechLang={speechLang}
           isListening={isListening}
           volume={volume}
           visualizerService={visualizerService}
           onVolumeChange={onVolumeChange}
           onTextChange={onTextChange}
           onToggleMic={onToggleMic}
+          onToggleSpeechLang={onToggleSpeechLang}
           onClearText={onClearText}
           onSelectPrompt={onSelectPrompt}
           onPasteClipboard={onPasteClipboard}
@@ -86,7 +95,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
         {/* Right Output Panel */}
         <OutputPanel
           translatedText={translatedText}
-          targetLang={targetLang}
+          targetLang={detectedLang === 'ko' ? 'en' : 'ko'}
           status={status}
           engine={engine}
           tone={tone}

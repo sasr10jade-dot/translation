@@ -120,6 +120,56 @@
   align-items: center;
 }
 
+.live-detect-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #c7d2fe;
+  animation: fadeIn 0.2s ease;
+}
+
+.speech-lang-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  margin-right: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.speech-lang-toggle-btn:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.speech-lang-flag {
+  font-size: 0.95rem;
+}
+
+.speech-lang-icon {
+  color: #38bdf8;
+}
+
+.mic-listening-guide {
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
 .mic-toggle-btn {
   display: flex;
   align-items: center;
