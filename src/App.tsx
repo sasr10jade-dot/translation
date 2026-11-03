@@ -68,6 +68,9 @@ export function App() {
   const currentRequestIdRef = useRef<number>(0);
   const lastTranslatedTextRef = useRef<string>('');
 
+  // Keep latest reference to executeTranslation to prevent speech recognition teardown
+  const executeTranslationRef = useRef<any>(null);
+
   // Theme effect & handler
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -251,9 +254,11 @@ export function App() {
     [sourceLang, targetLang, settings, status, synthesizerService]
   );
 
-  // Initialize Speech Recognition callbacks
+  // Keep latest executeTranslation function reference
+  executeTranslationRef.current = executeTranslation;
+
+  // Initialize Speech Recognition callbacks (stabilized: does not tear down on translation updates)
   useEffect(() => {
-    const initialSpeechLang = sourceLang === 'ko' ? 'ko-KR' : 'en-US';
     recognitionRef.current = new SpeechRecognitionService(
       {
         onStart: () => {
@@ -266,12 +271,12 @@ export function App() {
           if (interim) {
             setInterimText(interim);
           }
-          // 문장이 완성(Final)되었을 때만 번역기로 전달하여 문맥 품질을 극대화
+          // 문장이 완성(Final)되었을 때 최신 executeTranslation 호출
           if (final) {
             setInterimText('');
             setSourceText((prev) => {
               const next = prev ? `${prev} ${final}` : final;
-              executeTranslation(next, sourceLang, targetLang, 'mic');
+              executeTranslationRef.current?.(next, sourceLang, targetLang, 'mic');
               return next;
             });
           }
@@ -282,7 +287,7 @@ export function App() {
           visualizerService.stop();
         },
       },
-      initialSpeechLang
+      speechLang
     );
 
     return () => {
@@ -290,7 +295,7 @@ export function App() {
       visualizerService.stop();
       synthesizerService.stop();
     };
-  }, [executeTranslation, showToast, sourceLang, targetLang, visualizerService, synthesizerService]);
+  }, [showToast, visualizerService, synthesizerService]);
 
   const handleToggleSpeechLang = () => {
     const next = speechLang === 'ko-KR' ? 'en-US' : 'ko-KR';

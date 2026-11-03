@@ -13,7 +13,20 @@ export class AudioVisualizerService {
     this.canvas = canvas;
     this.canvasCtx = canvas.getContext('2d');
     this.onVolumeChange = onVolumeChange;
+    this.setupCanvasDPI();
     this.drawIdle();
+  }
+
+  private setupCanvasDPI() {
+    if (!this.canvas || !this.canvasCtx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = this.canvas.getBoundingClientRect();
+    const w = rect.width || 340;
+    const h = rect.height || 44;
+
+    this.canvas.width = w * dpr;
+    this.canvas.height = h * dpr;
+    this.canvasCtx.scale(dpr, dpr);
   }
 
   public async start(): Promise<boolean> {
@@ -57,17 +70,23 @@ export class AudioVisualizerService {
     }
 
     if (this.sourceNode) {
-      this.sourceNode.disconnect();
+      try {
+        this.sourceNode.disconnect();
+      } catch {}
       this.sourceNode = null;
     }
 
     if (this.mediaStream) {
-      this.mediaStream.getTracks().forEach((track) => track.stop());
+      try {
+        this.mediaStream.getTracks().forEach((track) => track.stop());
+      } catch {}
       this.mediaStream = null;
     }
 
     if (this.audioContext && this.audioContext.state !== 'closed') {
-      this.audioContext.close().catch(() => {});
+      try {
+        this.audioContext.close().catch(() => {});
+      } catch {}
       this.audioContext = null;
     }
 
@@ -98,8 +117,9 @@ export class AudioVisualizerService {
     }
 
     const ctx = this.canvasCtx;
-    const width = this.canvas.width;
-    const height = this.canvas.height;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const width = this.canvas.width / dpr;
+    const height = this.canvas.height / dpr;
 
     ctx.clearRect(0, 0, width, height);
 
@@ -117,15 +137,14 @@ export class AudioVisualizerService {
 
       // Dynamic glowing gradient
       const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
-      gradient.addColorStop(0, '#06b6d4'); // Cyan top
-      gradient.addColorStop(0.5, '#6366f1'); // Indigo center
-      gradient.addColorStop(1, '#a855f7'); // Purple bottom
+      gradient.addColorStop(0, '#06b6d4');
+      gradient.addColorStop(0.5, '#6366f1');
+      gradient.addColorStop(1, '#a855f7');
 
       ctx.fillStyle = gradient;
-      ctx.shadowBlur = Math.min(12, percent * 18);
+      ctx.shadowBlur = Math.min(10, percent * 14);
       ctx.shadowColor = '#6366f1';
 
-      // Rounded rectangle bar
       ctx.beginPath();
       const radius = barWidth / 2;
       ctx.roundRect(x, y, barWidth, barHeight, radius);
@@ -138,13 +157,13 @@ export class AudioVisualizerService {
   public drawIdle() {
     if (!this.canvas || !this.canvasCtx) return;
     const ctx = this.canvasCtx;
-    const width = this.canvas.width;
-    const height = this.canvas.height;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const width = this.canvas.width / dpr;
+    const height = this.canvas.height / dpr;
 
     ctx.clearRect(0, 0, width, height);
     ctx.shadowBlur = 0;
 
-    // Subtly breathing idle flat bars
     const barCount = 36;
     const barWidth = Math.max(2, (width / barCount) - 3);
 
