@@ -30,6 +30,7 @@ export interface AppSettings {
   continuousListening: boolean;
   debounceMs: number; // 텍스트 입력 번역 디바운스
   defaultViewMode: ViewMode;
+  fontScale: number; // 0.85 ~ 1.4 (폰트 배율)
 }
 
 export interface AudioVisualizerState {

@@ -13,6 +13,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   continuousListening: true,
   debounceMs: 500,
   defaultViewMode: 'normal',
+  fontScale: 1.0,
 };
 
 export const StorageService = {

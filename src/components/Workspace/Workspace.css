@@ -211,7 +211,7 @@
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-lg);
   color: #f1f5f9;
-  font-size: 1.45rem;
+  font-size: calc(1.35rem * var(--font-scale, 1));
   font-weight: 500;
   line-height: 1.75;
   resize: none;
@@ -220,7 +220,7 @@
 
 .text-input::placeholder {
   color: rgba(148, 163, 184, 0.6);
-  font-size: 1.2rem;
+  font-size: calc(1.15rem * var(--font-scale, 1));
 }
 
 .interim-floating-pill {
@@ -478,17 +478,17 @@
 }
 
 .translated-text-display.font-normal .korean-text {
-  font-size: 1.65rem;
+  font-size: calc(1.65rem * var(--font-scale, 1));
   line-height: 1.65;
 }
 
 .translated-text-display.font-large .korean-text {
-  font-size: 2.15rem;
+  font-size: calc(2.15rem * var(--font-scale, 1));
   line-height: 1.65;
 }
 
 .translated-text-display.font-huge .korean-text {
-  font-size: 2.75rem;
+  font-size: calc(2.75rem * var(--font-scale, 1));
   line-height: 1.6;
 }
 
@@ -504,7 +504,7 @@
 
 .placeholder-text {
   color: rgba(148, 163, 184, 0.75);
-  font-size: 1.25rem;
+  font-size: calc(1.2rem * var(--font-scale, 1));
   line-height: 1.7;
 }
 

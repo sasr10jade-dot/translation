@@ -200,6 +200,42 @@
   color: #e0e7ff;
 }
 
+/* Font Scale Adjuster */
+.font-scale-control {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 2px 4px;
+}
+
+.scale-btn {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.scale-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.scale-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.scale-val {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  min-width: 36px;
+  text-align: center;
+}
+
 /* Header Buttons */
 .header-btn {
   display: flex;

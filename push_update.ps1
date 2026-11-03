@@ -1,8 +1,8 @@
 git add .
-git commit -m "feat: add PWA desktop install, bidirectional EN/KO translation, auto language detection, default normal mode, and smoother translation pipeline"
+git commit -m "feat: switch repo to translation, add infinite mic continuous loop, Noto Sans KR font with custom scale adjuster, and advanced language detection"
 
 $token = (gh auth token).Trim()
-git remote set-url origin "https://sasr10jade-dot:$token@github.com/sasr10jade-dot/lotto.git"
+git remote set-url origin "https://sasr10jade-dot:$token@github.com/sasr10jade-dot/translation.git"
 git push origin main
-git remote set-url origin "https://github.com/sasr10jade-dot/lotto.git"
-Write-Host "GitHub 동기화 완료!"
+git remote set-url origin "https://github.com/sasr10jade-dot/translation.git"
+Write-Host "GitHub translation 저장소 동기화 완료!"

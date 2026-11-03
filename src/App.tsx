@@ -10,6 +10,7 @@ import { AudioVisualizerService } from './services/audioVisualizer';
 import { SpeechSynthesizerService } from './services/speechSynthesizer';
 import { translationManager } from './services/translation';
 import { StorageService } from './services/storage';
+import { detectLanguage } from './utils/langDetect';
 import { AppSettings, SupportedLang, TargetLang, TranslationRecord, TranslationStatus, ViewMode } from './types';
 import './App.css';
 
@@ -20,6 +21,9 @@ export function App() {
 
   // View Mode: 'normal' (default), 'wide', 'hud'
   const [viewMode, setViewMode] = useState<ViewMode>(settings.defaultViewMode || 'normal');
+
+  // Font Scale state (0.8 ~ 1.5)
+  const [fontScale, setFontScale] = useState<number>(settings.fontScale || 1.0);
 
   // Language Direction state
   const [sourceLang, setSourceLang] = useState<SupportedLang>('auto');
@@ -57,6 +61,18 @@ export function App() {
   const debounceTimerRef = useRef<any>(null);
   const currentRequestIdRef = useRef<number>(0);
   const lastTranslatedTextRef = useRef<string>('');
+
+  // Update global CSS font scale
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-scale', fontScale.toString());
+  }, [fontScale]);
+
+  const handleChangeFontScale = (delta: number) => {
+    setFontScale((prev) => {
+      const next = Math.min(1.5, Math.max(0.8, Math.round((prev + delta) * 10) / 10));
+      return next;
+    });
+  };
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -154,13 +170,13 @@ export function App() {
       setStatus('translating');
       setErrorMessage(null);
 
-      // 자동 언어 감지: 텍스트에 한글이 있으면 ko -> en, 영문 위주면 en -> ko
+      // 자동 언어 감지: 한글/영문 자모 및 비율 정밀 분석
       let effectiveSrc = currentSrc;
       let effectiveTgt = currentTgt;
       if (currentSrc === 'auto') {
-        const hasKorean = /[가-힣]/.test(trimmed);
-        effectiveSrc = hasKorean ? 'ko' : 'en';
-        effectiveTgt = hasKorean ? 'en' : 'ko';
+        const detected = detectLanguage(trimmed);
+        effectiveSrc = detected;
+        effectiveTgt = detected === 'ko' ? 'en' : 'ko';
       }
 
       try {
@@ -306,9 +322,10 @@ export function App() {
     // 언어 자동 감지
     let currentSrc = sourceLang;
     let currentTgt = targetLang;
-    if (sourceLang === 'auto') {
-      const isKorean = /[가-힣]/.test(newText);
-      currentTgt = isKorean ? 'en' : 'ko';
+    if (sourceLang === 'auto' && newText.trim()) {
+      const detected = detectLanguage(newText);
+      currentSrc = detected;
+      currentTgt = detected === 'ko' ? 'en' : 'ko';
     }
 
     debounceTimerRef.current = setTimeout(() => {
@@ -408,9 +425,11 @@ export function App() {
         viewMode={viewMode}
         sourceLang={sourceLang}
         targetLang={targetLang}
+        fontScale={fontScale}
         canInstallPWA={canInstallPWA}
         onInstallPWA={handleInstallPWA}
         onChangeViewMode={(mode) => setViewMode(mode)}
+        onChangeFontScale={handleChangeFontScale}
         onSwapLanguages={handleSwapLanguages}
         onToggleHistory={() => setShowHistory(!showHistory)}
         onOpenSettings={() => setShowSettings(true)}

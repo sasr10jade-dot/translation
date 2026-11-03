@@ -26,9 +26,11 @@ interface HeaderProps {
   viewMode: ViewMode;
   sourceLang: SupportedLang;
   targetLang: TargetLang;
+  fontScale: number;
   canInstallPWA: boolean;
   onInstallPWA: () => void;
   onChangeViewMode: (mode: ViewMode) => void;
+  onChangeFontScale: (delta: number) => void;
   onSwapLanguages: () => void;
   onToggleHistory: () => void;
   onOpenSettings: () => void;
@@ -43,9 +45,11 @@ export const Header: React.FC<HeaderProps> = ({
   viewMode,
   sourceLang,
   targetLang,
+  fontScale,
   canInstallPWA,
   onInstallPWA,
   onChangeViewMode,
+  onChangeFontScale,
   onSwapLanguages,
   onToggleHistory,
   onOpenSettings,
@@ -155,6 +159,29 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Tv size={15} />
             <span>자막 HUD</span>
+          </button>
+        </div>
+
+        {/* Font Scale Adjuster */}
+        <div className="font-scale-control" title="전체 폰트 크기 확대/축소">
+          <button
+            type="button"
+            className="scale-btn"
+            onClick={() => onChangeFontScale(-0.1)}
+            disabled={fontScale <= 0.8}
+            title="글자 크기 축소 (A-)"
+          >
+            A-
+          </button>
+          <span className="scale-val">{Math.round(fontScale * 100)}%</span>
+          <button
+            type="button"
+            className="scale-btn"
+            onClick={() => onChangeFontScale(0.1)}
+            disabled={fontScale >= 1.5}
+            title="글자 크기 확대 (A+)"
+          >
+            A+
           </button>
         </div>
 
