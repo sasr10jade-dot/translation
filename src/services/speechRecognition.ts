@@ -55,9 +55,11 @@ export class SpeechRecognitionService {
     }
 
     try {
+      const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
       this.recognition = new SpeechRecognitionClass();
       this.recognition.lang = this.currentLang || 'en-US';
-      this.recognition.continuous = true;
+      // 모바일 브라우저는 continuous: false일 때 인식률이 극대화되고 문장이 즉시 확정됨
+      this.recognition.continuous = !isMobile;
       this.recognition.interimResults = true;
       this.recognition.maxAlternatives = 1;
 

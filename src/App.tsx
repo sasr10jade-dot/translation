@@ -306,7 +306,7 @@ export function App() {
     );
   };
 
-  // Mic Toggle Handler
+  // Mic Toggle Handler (Mobile resource conflict resolved)
   const handleToggleMic = async () => {
     if (isListening) {
       recognitionRef.current?.stop();
@@ -314,24 +314,25 @@ export function App() {
       setIsListening(false);
     } else {
       if (!SpeechRecognitionService.isSupported()) {
-        showToast('현재 브라우저에서는 음성 인식을 지원하지 않습니다. Chrome을 권장합니다.');
+        showToast('현재 브라우저에서는 음성 인식을 지원하지 않습니다. Chrome/Edge를 권장합니다.');
         return;
       }
 
       // 현재 선택된 음성 언어 적용
       recognitionRef.current?.setLang(speechLang);
 
-      const audioStarted = await visualizerService.start();
-      if (!audioStarted) {
-        showToast('마이크 연결 권한이 필요합니다.');
-        return;
-      }
+      const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
+      // [핵심 모바일 패치]: 모바일에서는 SpeechRecognition을 먼저 시작해야 마이크 점유 충돌이 발생하지 않음
       const recStarted = recognitionRef.current?.start();
       if (recStarted) {
         setIsListening(true);
+        // PC 데스크톱인 경우에만 캔버스 파형 스트림을 병행 실행 (모바일 마이크 충돌 방지)
+        if (!isMobile) {
+          visualizerService.start().catch(() => {});
+        }
       } else {
-        visualizerService.stop();
+        showToast('마이크를 시작하지 못했습니다. 브라우저의 마이크 권한을 확인해 주세요.');
       }
     }
   };
