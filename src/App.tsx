@@ -17,7 +17,17 @@ import { PipSubtitleService } from './services/pipSubtitle';
 import { translationManager } from './services/translation';
 import { StorageService } from './services/storage';
 import { detectLanguage } from './utils/langDetect';
-import { AppSettings, AppTheme, SupportedLang, TargetLang, TranslationRecord, TranslationStatus, ViewMode } from './types';
+import {
+  AppSettings,
+  AppTheme,
+  SupportedLang,
+  TargetLang,
+  SpeechLangCode,
+  TranslationRecord,
+  TranslationStatus,
+  ViewMode,
+  LANGUAGES_MAP,
+} from './types';
 import './App.css';
 
 export function App() {
@@ -36,10 +46,10 @@ export function App() {
     return (localStorage.getItem('livelingua_theme_v1') as AppTheme) || 'dark';
   });
 
-  // Language Direction state
+  // 5-Language Direction state
   const [sourceLang, setSourceLang] = useState<SupportedLang>('auto');
   const [targetLang, setTargetLang] = useState<TargetLang>('ko');
-  const [speechLang, setSpeechLang] = useState<'en-US' | 'ko-KR'>('en-US');
+  const [speechLang, setSpeechLang] = useState<SpeechLangCode>('ko-KR');
 
   // Input & Output Text state
   const [sourceText, setSourceText] = useState('');
@@ -76,8 +86,6 @@ export function App() {
   const debounceTimerRef = useRef<any>(null);
   const currentRequestIdRef = useRef<number>(0);
   const lastTranslatedTextRef = useRef<string>('');
-
-  // Keep latest reference to executeTranslation to prevent speech recognition teardown
   const executeTranslationRef = useRef<any>(null);
 
   // Update PIP Subtitle when text changes
@@ -161,26 +169,44 @@ export function App() {
     showToast('설정이 성공적으로 저장되었습니다.');
   };
 
+  // 5-Language Selectors
+  const handleSelectSourceLang = (lang: SupportedLang) => {
+    setSourceLang(lang);
+    if (lang !== 'auto') {
+      const meta = LANGUAGES_MAP[lang as TargetLang];
+      if (meta) {
+        setSpeechLang(meta.speechCode);
+        recognitionRef.current?.setLang(meta.speechCode);
+      }
+    }
+    showToast(`원문 언어가 [${lang === 'auto' ? '자동 감지' : LANGUAGES_MAP[lang as TargetLang]?.label}]로 설정되었습니다.`);
+  };
+
+  const handleSelectTargetLang = (lang: TargetLang) => {
+    setTargetLang(lang);
+    showToast(`번역 대상 언어가 [${LANGUAGES_MAP[lang]?.label}]로 설정되었습니다.`);
+  };
+
   // Swap Source <-> Target Languages
   const handleSwapLanguages = () => {
-    const nextTarget: TargetLang = targetLang === 'ko' ? 'en' : 'ko';
-    const nextSource: SupportedLang = nextTarget === 'ko' ? 'en' : 'ko';
+    const currentEffectiveSrc: TargetLang = sourceLang === 'auto' ? detectLanguage(sourceText) : (sourceLang as TargetLang);
+    const nextSource: SupportedLang = targetLang;
+    const nextTarget: TargetLang = currentEffectiveSrc;
 
     setSourceLang(nextSource);
     setTargetLang(nextTarget);
 
-    // 음성 인식기 언어도 함께 전환
-    const speechLang = nextSource === 'ko' ? 'ko-KR' : 'en-US';
-    recognitionRef.current?.setLang(speechLang);
+    const speechCode = LANGUAGES_MAP[nextSource as TargetLang]?.speechCode || 'ko-KR';
+    setSpeechLang(speechCode);
+    recognitionRef.current?.setLang(speechCode);
 
-    // 텍스트가 있으면 맞교환
     if (translatedText.trim()) {
       setSourceText(translatedText);
       setTranslatedText(sourceText);
       lastTranslatedTextRef.current = translatedText;
     }
 
-    showToast(`번역 방향이 [${nextSource === 'en' ? '영어 ➔ 한국어' : '한국어 ➔ 영어'}]로 전환되었습니다.`);
+    showToast(`언어 방향이 [${LANGUAGES_MAP[nextSource as TargetLang]?.label} ➔ ${LANGUAGES_MAP[nextTarget]?.label}]로 전환되었습니다.`);
   };
 
   // Core High-Performance Translation Executor
@@ -194,23 +220,21 @@ export function App() {
         return;
       }
 
-      // 동일한 텍스트 중복 호출 방지
       if (trimmed === lastTranslatedTextRef.current && status === 'success') {
         return;
       }
 
-      // Race condition 차단: 요청 고유 ID 증가
       const reqId = ++currentRequestIdRef.current;
       setStatus('translating');
       setErrorMessage(null);
 
-      // 자동 언어 감지: 한글/영문 자모 및 비율 정밀 분석
-      let effectiveSrc = currentSrc;
-      let effectiveTgt = currentTgt;
-      if (currentSrc === 'auto') {
-        const detected = detectLanguage(trimmed);
-        effectiveSrc = detected;
-        effectiveTgt = detected === 'ko' ? 'en' : 'ko';
+      // 5개국어 자동 언어 감지
+      let effectiveSrc: TargetLang = currentSrc === 'auto' ? detectLanguage(trimmed) : (currentSrc as TargetLang);
+      let effectiveTgt: TargetLang = currentTgt;
+
+      // 만약 원문과 대상 언어가 같아진 경우 기본 언어(한국어 <-> 영어)로 교차 설정
+      if (effectiveSrc === effectiveTgt) {
+        effectiveTgt = effectiveSrc === 'ko' ? 'en' : 'ko';
       }
 
       try {
@@ -221,7 +245,6 @@ export function App() {
           effectiveTgt
         );
 
-        // 이전 요청이 나중에 끝난 경우 무시
         if (reqId !== currentRequestIdRef.current) {
           return;
         }
@@ -231,7 +254,6 @@ export function App() {
         setLatencyMs(result.latencyMs);
         setStatus('success');
 
-        // 히스토리 기록 저장 (단어 수가 있거나 유의미한 길이일 때)
         if (result.translatedText) {
           const newRecord: TranslationRecord = {
             id: `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
@@ -249,11 +271,10 @@ export function App() {
           setRecords((prev) => [newRecord, ...prev.filter((r) => r.sourceText !== trimmed)]);
         }
 
-        // Auto TTS 옵션 활성화 시 자동 읽기
+        // Auto TTS 옵션 활성화 시 대상 언어 네이티브 보이스로 자동 읽기
         if (settings.autoTts && result.translatedText) {
           setIsSpeaking(true);
-          const ttsLang = effectiveTgt === 'ko' ? 'ko-KR' : 'en-US';
-          synthesizerService.speak(result.translatedText, ttsLang, settings.ttsVoiceRate, () => {
+          synthesizerService.speak(result.translatedText, effectiveTgt, settings.ttsVoiceRate, () => {
             setIsSpeaking(false);
           });
         }
@@ -267,10 +288,9 @@ export function App() {
     [sourceLang, targetLang, settings, status, synthesizerService]
   );
 
-  // Keep latest executeTranslation function reference
   executeTranslationRef.current = executeTranslation;
 
-  // Initialize Speech Recognition callbacks (stabilized: does not tear down on translation updates)
+  // Initialize Speech Recognition callbacks
   useEffect(() => {
     recognitionRef.current = new SpeechRecognitionService(
       {
@@ -284,7 +304,6 @@ export function App() {
           if (interim) {
             setInterimText(interim);
           }
-          // 문장이 완성(Final)되었을 때 최신 executeTranslation 호출
           if (final) {
             setInterimText('');
             setSourceText((prev) => {
@@ -310,15 +329,17 @@ export function App() {
     };
   }, [showToast, visualizerService, synthesizerService]);
 
-  const handleToggleSpeechLang = () => {
-    const next = speechLang === 'ko-KR' ? 'en-US' : 'ko-KR';
-    setSpeechLang(next);
-    recognitionRef.current?.setLang(next);
-    showToast(
-      next === 'ko-KR'
-        ? '마이크가 [🇰🇷 한국어 음성] 청취 모드로 전환되었습니다.'
-        : '마이크가 [🇺🇸 영어 음성] 청취 모드로 전환되었습니다.'
-    );
+  const handleChangeSpeechLang = (lang: SpeechLangCode) => {
+    setSpeechLang(lang);
+    recognitionRef.current?.setLang(lang);
+    const meta = Object.values(LANGUAGES_MAP).find((m) => m.speechCode === lang);
+    showToast(`마이크 음성 언어가 [${meta?.flag} ${meta?.label}]로 설정되었습니다.`);
+  };
+
+  const handleCycleSpeechLang = () => {
+    const codes: SpeechLangCode[] = ['ko-KR', 'en-US', 'ja-JP', 'zh-CN', 'fr-FR'];
+    const nextIdx = (codes.indexOf(speechLang) + 1) % codes.length;
+    handleChangeSpeechLang(codes[nextIdx]);
   };
 
   // Mic Toggle Handler (Mobile resource conflict resolved)
@@ -333,12 +354,10 @@ export function App() {
         return;
       }
 
-      // 현재 선택된 음성 언어 적용
       recognitionRef.current?.setLang(speechLang);
 
       const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
-      // 모바일에서는 SpeechRecognition을 먼저 시작해야 마이크 점유 충돌이 발생하지 않음
       const recStarted = recognitionRef.current?.start();
       if (recStarted) {
         setIsListening(true);
@@ -359,7 +378,6 @@ export function App() {
       const activeTag = document.activeElement?.tagName.toLowerCase();
       const isInputFocused = activeTag === 'input' || activeTag === 'textarea';
 
-      // 1. Push-to-Talk (Spacebar): 설정이 켜져 있고 입력 포커스가 아닐 때
       if (settings.pushToTalk && e.code === 'Space' && !isInputFocused) {
         e.preventDefault();
         if (!spacePressed && !isListening) {
@@ -369,13 +387,11 @@ export function App() {
         }
       }
 
-      // 2. Ctrl + Shift + S: 언어 방향 즉시 스왑
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyS') {
         e.preventDefault();
         handleSwapLanguages();
       }
 
-      // 3. Ctrl + Shift + C: 번역문 즉시 복사
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyC') {
         e.preventDefault();
         if (translatedText) {
@@ -430,13 +446,13 @@ export function App() {
       return;
     }
 
-    // 언어 자동 감지
+    // 5개국어 자동 언어 감지
     let currentSrc = sourceLang;
     let currentTgt = targetLang;
     if (sourceLang === 'auto' && newText.trim()) {
       const detected = detectLanguage(newText);
       currentSrc = detected;
-      currentTgt = detected === 'ko' ? 'en' : 'ko';
+      currentTgt = detected === targetLang ? (detected === 'ko' ? 'en' : 'ko') : targetLang;
     }
 
     debounceTimerRef.current = setTimeout(() => {
@@ -479,8 +495,7 @@ export function App() {
   const handleSpeak = (text: string) => {
     if (!text.trim()) return;
     setIsSpeaking(true);
-    const ttsLang = targetLang === 'ko' ? 'ko-KR' : 'en-US';
-    synthesizerService.speak(text, ttsLang, settings.ttsVoiceRate, () => {
+    synthesizerService.speak(text, targetLang, settings.ttsVoiceRate, () => {
       setIsSpeaking(false);
     });
   };
@@ -525,6 +540,11 @@ export function App() {
     setShowHistory(false);
   };
 
+  // Calculate detected language for input panel
+  const detectedLang: TargetLang = sourceText.trim()
+    ? detectLanguage(sourceText)
+    : ((Object.keys(LANGUAGES_MAP).find((k) => LANGUAGES_MAP[k as TargetLang].speechCode === speechLang) as TargetLang) || 'ko');
+
   return (
     <div className={`app-layout layout-${viewMode}`}>
       {/* Top Header */}
@@ -544,6 +564,8 @@ export function App() {
         onTogglePip={handleTogglePip}
         onChangeViewMode={(mode) => setViewMode(mode)}
         onChangeFontScale={handleChangeFontScale}
+        onSelectSourceLang={handleSelectSourceLang}
+        onSelectTargetLang={handleSelectTargetLang}
         onSwapLanguages={handleSwapLanguages}
         onToggleHistory={() => setShowHistory(!showHistory)}
         onOpenSettings={() => setShowSettings(true)}
@@ -557,7 +579,7 @@ export function App() {
           <DualWorkspace
             sourceLang={sourceLang}
             targetLang={targetLang}
-            detectedLang={sourceText.trim() ? detectLanguage(sourceText) : (speechLang === 'ko-KR' ? 'ko' : 'en')}
+            detectedLang={detectedLang}
             speechLang={speechLang}
             viewMode={viewMode}
             sourceText={sourceText}
@@ -568,7 +590,7 @@ export function App() {
             onVolumeChange={setVolume}
             onTextChange={handleTextChange}
             onToggleMic={handleToggleMic}
-            onToggleSpeechLang={handleToggleSpeechLang}
+            onChangeSpeechLang={handleChangeSpeechLang}
             onClearText={handleClearText}
             onSelectPrompt={handleSelectPrompt}
             onPasteClipboard={handlePasteClipboard}
@@ -600,7 +622,7 @@ export function App() {
             targetLang={targetLang}
             speechLang={speechLang}
             onToggleMic={handleToggleMic}
-            onToggleSpeechLang={handleToggleSpeechLang}
+            onChangeSpeechLang={handleChangeSpeechLang}
             onTextChange={handleTextChange}
             onSendText={(text) => executeTranslation(text, sourceLang, targetLang, 'text')}
             onSpeak={handleSpeak}
@@ -686,7 +708,7 @@ export function App() {
         translatedText={translatedText}
         isSpeaking={isSpeaking}
         onToggleMic={handleToggleMic}
-        onToggleSpeechLang={handleToggleSpeechLang}
+        onCycleSpeechLang={handleCycleSpeechLang}
         onClearText={handleClearText}
         onSpeak={handleSpeak}
       />

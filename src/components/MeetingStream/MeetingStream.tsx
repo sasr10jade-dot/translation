@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { TranslationRecord, SupportedLang, TargetLang, TranslationStatus } from '../../types';
+import { TranslationRecord, SupportedLang, TargetLang, TranslationStatus, SpeechLangCode } from '../../types';
 import { Mic, MicOff, Volume2, Sparkles, Download, FileText, Send } from 'lucide-react';
 import './MeetingStream.css';
 
@@ -12,9 +12,9 @@ interface MeetingStreamProps {
   isListening: boolean;
   sourceLang: SupportedLang;
   targetLang: TargetLang;
-  speechLang: 'ko-KR' | 'en-US';
+  speechLang: SpeechLangCode;
   onToggleMic: () => void;
-  onToggleSpeechLang: () => void;
+  onChangeSpeechLang: (lang: SpeechLangCode) => void;
   onTextChange: (text: string) => void;
   onSendText: (text: string) => void;
   onSpeak: (text: string) => void;
@@ -31,7 +31,7 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
   isListening,
   speechLang,
   onToggleMic,
-  onToggleSpeechLang,
+  onChangeSpeechLang,
   onTextChange,
   onSendText,
   onSpeak,
@@ -163,14 +163,18 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
 
       {/* Stream Input Controller */}
       <div className="stream-input-bar">
-        <button
-          type="button"
-          className="stream-lang-btn"
-          onClick={onToggleSpeechLang}
-          title="음성 인식 언어 전환"
+        <select
+          value={speechLang}
+          onChange={(e) => onChangeSpeechLang(e.target.value as SpeechLangCode)}
+          className="stream-lang-select"
+          title="마이크 음성 언어 선택"
         >
-          <span>{speechLang === 'ko-KR' ? '🇰🇷 한국어' : '🇺🇸 영어'}</span>
-        </button>
+          <option value="ko-KR">🇰🇷 한국어</option>
+          <option value="en-US">🇺🇸 영어</option>
+          <option value="ja-JP">🇯🇵 일본어</option>
+          <option value="zh-CN">🇨🇳 중국어</option>
+          <option value="fr-FR">🇫🇷 프랑스어</option>
+        </select>
 
         <button
           type="button"

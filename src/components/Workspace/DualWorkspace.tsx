@@ -2,15 +2,15 @@ import React from 'react';
 import { InputPanel } from './InputPanel';
 import { OutputPanel } from './OutputPanel';
 import { AudioVisualizerService } from '../../services/audioVisualizer';
-import { SupportedLang, TargetLang, TranslationEngine, TranslationStatus, TranslationTone, ViewMode } from '../../types';
+import { SupportedLang, TargetLang, SpeechLangCode, TranslationEngine, TranslationStatus, TranslationTone, ViewMode } from '../../types';
 import './Workspace.css';
 
 interface DualWorkspaceProps {
   // Lang props
   sourceLang: SupportedLang;
   targetLang: TargetLang;
-  detectedLang: 'ko' | 'en';
-  speechLang: 'ko-KR' | 'en-US';
+  detectedLang: TargetLang;
+  speechLang: SpeechLangCode;
   viewMode: ViewMode;
 
   // Input props
@@ -22,7 +22,7 @@ interface DualWorkspaceProps {
   onVolumeChange?: (volume: number) => void;
   onTextChange: (newText: string) => void;
   onToggleMic: () => void;
-  onToggleSpeechLang: () => void;
+  onChangeSpeechLang: (lang: SpeechLangCode) => void;
   onClearText: () => void;
   onSelectPrompt: (promptText: string) => void;
   onPasteClipboard: () => void;
@@ -54,7 +54,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
   onVolumeChange,
   onTextChange,
   onToggleMic,
-  onToggleSpeechLang,
+  onChangeSpeechLang,
   onClearText,
   onSelectPrompt,
   onPasteClipboard,
@@ -86,7 +86,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
           onVolumeChange={onVolumeChange}
           onTextChange={onTextChange}
           onToggleMic={onToggleMic}
-          onToggleSpeechLang={onToggleSpeechLang}
+          onChangeSpeechLang={onChangeSpeechLang}
           onClearText={onClearText}
           onSelectPrompt={onSelectPrompt}
           onPasteClipboard={onPasteClipboard}
@@ -95,7 +95,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
         {/* Right Output Panel */}
         <OutputPanel
           translatedText={translatedText}
-          targetLang={detectedLang === 'ko' ? 'en' : 'ko'}
+          targetLang={targetLang}
           status={status}
           engine={engine}
           tone={tone}
@@ -110,3 +110,4 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
     </div>
   );
 };
+

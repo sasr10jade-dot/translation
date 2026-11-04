@@ -1,3 +1,13 @@
+import { TargetLang } from '../types';
+
+const LANG_TO_BCP47: Record<TargetLang, string> = {
+  ko: 'ko-KR',
+  en: 'en-US',
+  ja: 'ja-JP',
+  zh: 'zh-CN',
+  fr: 'fr-FR',
+};
+
 export class SpeechSynthesizerService {
   private static instance: SpeechSynthesizerService;
   private voices: SpeechSynthesisVoice[] = [];
@@ -25,25 +35,28 @@ export class SpeechSynthesizerService {
 
   public speak(
     text: string,
-    lang: 'ko-KR' | 'en-US' = 'ko-KR',
+    targetLang: TargetLang | string = 'ko',
     rate: number = 1.0,
     onEnd?: () => void
   ): boolean {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
     if (!text.trim()) return false;
 
-    // 기존 재생 취소
     window.speechSynthesis.cancel();
 
+    const langCode = LANG_TO_BCP47[targetLang as TargetLang] || targetLang || 'ko-KR';
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
+    utterance.lang = langCode;
     utterance.rate = Math.max(0.5, Math.min(2.0, rate));
     utterance.pitch = 1.0;
 
-    // 해당 언어에 적합한 보이스 선택
-    const matchingVoices = this.voices.filter((v) => v.lang.startsWith(lang.slice(0, 2)));
+    // 해당 언어의 최적 보이스 선택 (Google / Natural / Microsoft 우선)
+    const langPrefix = langCode.slice(0, 2);
+    const matchingVoices = this.voices.filter((v) => v.lang.toLowerCase().startsWith(langPrefix));
     if (matchingVoices.length > 0) {
-      const preferred = matchingVoices.find((v) => v.name.includes('Natural') || v.name.includes('Google')) || matchingVoices[0];
+      const preferred = matchingVoices.find((v) =>
+        v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Online')
+      ) || matchingVoices[0];
       utterance.voice = preferred;
     }
 

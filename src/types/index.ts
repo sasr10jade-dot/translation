@@ -2,10 +2,28 @@ export type TranslationEngine = 'free' | 'gemini';
 export type TranslationTone = 'natural' | 'polite' | 'casual' | 'formal';
 export type InputMode = 'mic' | 'text';
 export type TranslationStatus = 'idle' | 'translating' | 'success' | 'error';
-export type SupportedLang = 'en' | 'ko' | 'auto';
-export type TargetLang = 'en' | 'ko';
+export type SupportedLang = 'auto' | 'ko' | 'en' | 'ja' | 'zh' | 'fr';
+export type TargetLang = 'ko' | 'en' | 'ja' | 'zh' | 'fr';
 export type ViewMode = 'normal' | 'wide' | 'hud' | 'stream';
 export type AppTheme = 'dark' | 'light';
+
+export type SpeechLangCode = 'ko-KR' | 'en-US' | 'ja-JP' | 'zh-CN' | 'fr-FR';
+
+export interface LanguageMeta {
+  code: TargetLang;
+  label: string;
+  flag: string;
+  speechCode: SpeechLangCode;
+  greeting: string;
+}
+
+export const LANGUAGES_MAP: Record<TargetLang, LanguageMeta> = {
+  ko: { code: 'ko', label: '한국어', flag: '🇰🇷', speechCode: 'ko-KR', greeting: '안녕하세요' },
+  en: { code: 'en', label: '영어', flag: '🇺🇸', speechCode: 'en-US', greeting: 'Hello' },
+  ja: { code: 'ja', label: '일본어', flag: '🇯🇵', speechCode: 'ja-JP', greeting: 'こんにちは' },
+  zh: { code: 'zh', label: '중국어', flag: '🇨🇳', speechCode: 'zh-CN', greeting: '你好' },
+  fr: { code: 'fr', label: '프랑스어', flag: '🇫🇷', speechCode: 'fr-FR', greeting: 'Bonjour' },
+};
 
 export interface GlossaryItem {
   id: string;
@@ -42,16 +60,16 @@ export interface AppSettings {
   autoTts: boolean;
   ttsVoiceRate: number; // 0.8 ~ 1.4
   continuousListening: boolean;
-  debounceMs: number; // 텍스트 입력 번역 디바운스
+  debounceMs: number;
   defaultViewMode: ViewMode;
-  fontScale: number; // 0.85 ~ 1.5
-  pushToTalk: boolean; // Spacebar 무전기 모드
-  glossary: GlossaryItem[]; // 커스텀 전문 용어 사전
+  fontScale: number;
+  pushToTalk: boolean;
+  glossary: GlossaryItem[];
 }
 
 export interface AudioVisualizerState {
   isListening: boolean;
-  volume: number; // 0 - 100
+  volume: number;
   error: string | null;
 }
 
@@ -60,5 +78,5 @@ export interface QuickPrompt {
   category: 'daily' | 'business' | 'tech';
   text: string;
   label: string;
-  lang: 'en' | 'ko';
+  lang: TargetLang;
 }

@@ -1,24 +1,24 @@
 import React from 'react';
-import { Mic, MicOff, Trash2, Clipboard, Volume2, ArrowLeftRight, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Trash2, Clipboard, Volume2, Sparkles } from 'lucide-react';
 import { AudioVisualizerCanvas } from './AudioVisualizerCanvas';
 import { AudioVisualizerService } from '../../services/audioVisualizer';
 import { QuickChips } from './QuickChips';
-import { SupportedLang, TargetLang } from '../../types';
+import { SupportedLang, TargetLang, SpeechLangCode, LANGUAGES_MAP } from '../../types';
 
 interface InputPanelProps {
   text: string;
   interimText: string;
   sourceLang: SupportedLang;
   targetLang?: TargetLang;
-  detectedLang: 'ko' | 'en';
-  speechLang: 'ko-KR' | 'en-US';
+  detectedLang: TargetLang;
+  speechLang: SpeechLangCode;
   isListening: boolean;
   volume: number;
   visualizerService: AudioVisualizerService;
   onVolumeChange?: (volume: number) => void;
   onTextChange: (newText: string) => void;
   onToggleMic: () => void;
-  onToggleSpeechLang: () => void;
+  onChangeSpeechLang: (lang: SpeechLangCode) => void;
   onClearText: () => void;
   onSelectPrompt: (promptText: string) => void;
   onPasteClipboard: () => void;
@@ -36,7 +36,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   onVolumeChange,
   onTextChange,
   onToggleMic,
-  onToggleSpeechLang,
+  onChangeSpeechLang,
   onClearText,
   onSelectPrompt,
   onPasteClipboard,
@@ -45,43 +45,43 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const charCount = text.length;
 
-  const isSpeechKorean = speechLang === 'ko-KR';
+  const currentMeta = LANGUAGES_MAP[detectedLang] || LANGUAGES_MAP.ko;
 
   return (
     <div className="workspace-panel input-panel">
       {/* Panel Top bar */}
       <div className="panel-header">
         <div className="panel-header-left">
-          <span className={`lang-tag ${detectedLang === 'ko' ? 'ko' : 'en'}`}>
+          <span className={`lang-tag ${detectedLang}`}>
             {sourceLang === 'auto'
-              ? `자동 감지: ${detectedLang === 'ko' ? '한국어' : '영어'}`
-              : sourceLang === 'ko'
-              ? '한국어 (KO)'
-              : '영어 (EN)'}
+              ? `자동 감지: ${currentMeta.flag} ${currentMeta.label}`
+              : `${currentMeta.flag} ${currentMeta.label}`}
           </span>
           <span className="panel-title">원문 입력</span>
 
           {text.trim() && sourceLang === 'auto' && (
             <span className="live-detect-pill" title="입력 텍스트를 정밀 분석하여 언어를 자동 판별했습니다.">
               <Sparkles size={11} />
-              <span>{detectedLang === 'ko' ? '한국어 감지됨' : '영어 감지됨'}</span>
+              <span>{currentMeta.label} 감지됨</span>
             </span>
           )}
         </div>
 
-        {/* Mic Control & Speech Lang Switcher */}
+        {/* Mic Control & 5-Language Speech Selector */}
         <div className="mic-control-wrapper">
-          {/* Mic Speech Lang Quick Switcher */}
-          <button
-            type="button"
-            className="speech-lang-toggle-btn"
-            onClick={onToggleSpeechLang}
-            title="마이크가 들을 언어를 즉시 전환합니다"
+          {/* 5-Language Speech Lang Dropdown */}
+          <select
+            value={speechLang}
+            onChange={(e) => onChangeSpeechLang(e.target.value as SpeechLangCode)}
+            className="speech-lang-select"
+            title="마이크가 들을 음성 언어 선택"
           >
-            <span className="speech-lang-flag">{isSpeechKorean ? '🇰🇷' : '🇺🇸'}</span>
-            <span className="speech-lang-text">{isSpeechKorean ? '한국어 음성' : '영어 음성'}</span>
-            <ArrowLeftRight size={12} className="speech-lang-icon" />
-          </button>
+            <option value="ko-KR">🇰🇷 한국어 음성</option>
+            <option value="en-US">🇺🇸 영어 음성</option>
+            <option value="ja-JP">🇯🇵 일본어 음성</option>
+            <option value="zh-CN">🇨🇳 중국어 음성</option>
+            <option value="fr-FR">🇫🇷 프랑스어 음성</option>
+          </select>
 
           {/* Mic Button */}
           <button
@@ -112,11 +112,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       <div className="textarea-wrapper">
         <textarea
           className="text-input"
-          placeholder={
-            isSpeechKorean
-              ? '한국어로 말씀하시거나 텍스트를 입력하세요 (자동으로 영어로 번역됩니다)...'
-              : '영어로 말씀하시거나 영문을 입력하세요 (자동으로 한국어로 번역됩니다)...'
-          }
+          placeholder={`${currentMeta.label}로 말씀하시거나 텍스트를 입력하세요 (자동 감지 및 실시간 번역)...`}
           value={displayText}
           onChange={(e) => onTextChange(e.target.value)}
           spellCheck={false}
@@ -136,7 +132,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
           <span className="stat-pill">{wordCount}단어</span>
           <span className="mic-listening-guide">
             {isListening
-              ? `🎙️ ${isSpeechKorean ? '한국어' : '영어'} 발화 대기 중...`
+              ? `🎙️ ${speechLang.split('-')[0].toUpperCase()} 발화 대기 중...`
               : '마이크 버튼을 누르면 무제한 청취가 시작됩니다'}
           </span>
         </div>
@@ -166,7 +162,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       </div>
 
       {/* Quick sample chips */}
-      <QuickChips sourceLang={isSpeechKorean ? 'ko' : 'en'} onSelectPrompt={onSelectPrompt} />
+      <QuickChips currentLang={detectedLang} onSelectPrompt={onSelectPrompt} />
     </div>
   );
 };

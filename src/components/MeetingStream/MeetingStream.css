@@ -235,6 +235,34 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
+.stream-lang-select {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.45rem 0.65rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.stream-lang-select option {
+  background: #111827;
+  color: #ffffff;
+}
+
+[data-theme='light'] .stream-lang-select {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #090d16;
+}
+
+[data-theme='light'] .stream-lang-select option {
+  background: #ffffff;
+  color: #090d16;
+}
+
 .stream-lang-btn {
   font-size: 0.75rem;
   font-weight: 700;

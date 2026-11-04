@@ -15,17 +15,17 @@ export class SpeechRecognitionService {
   private recognition: any = null;
   // 사용자가 명시적으로 켰는지 여부 (사용자가 끄기 전까지는 절대 false가 되지 않음)
   private isUserActive = false;
-  private currentLang: 'en-US' | 'ko-KR' = 'en-US';
+  private currentLang: string = 'en-US';
   private callbacks: SpeechRecognitionCallbacks;
   private restartTimer: any = null;
 
-  constructor(callbacks: SpeechRecognitionCallbacks, initialLang: 'en-US' | 'ko-KR' = 'en-US') {
+  constructor(callbacks: SpeechRecognitionCallbacks, initialLang: string = 'en-US') {
     this.callbacks = callbacks;
     this.currentLang = initialLang;
     this.initRecognition();
   }
 
-  public setLang(lang: 'en-US' | 'ko-KR') {
+  public setLang(lang: string) {
     if (this.currentLang === lang) return;
     this.currentLang = lang;
     const wasActive = this.isUserActive;
@@ -36,7 +36,7 @@ export class SpeechRecognitionService {
     }
   }
 
-  public getLang(): 'en-US' | 'ko-KR' {
+  public getLang(): string {
     return this.currentLang;
   }
 

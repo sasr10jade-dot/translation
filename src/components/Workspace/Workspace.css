@@ -134,6 +134,35 @@
   animation: fadeIn 0.2s ease;
 }
 
+.speech-lang-select {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.4rem 0.65rem;
+  margin-right: 0.5rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.speech-lang-select option {
+  background: #111827;
+  color: #ffffff;
+}
+
+[data-theme='light'] .speech-lang-select {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #090d16;
+}
+
+[data-theme='light'] .speech-lang-select option {
+  background: #ffffff;
+  color: #090d16;
+}
+
 .speech-lang-toggle-btn {
   display: flex;
   align-items: center;

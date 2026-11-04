@@ -1,81 +1,100 @@
 import React from 'react';
-import { QuickPrompt, SupportedLang } from '../../types';
+import { QuickPrompt, TargetLang } from '../../types';
 
 interface QuickChipsProps {
-  sourceLang: SupportedLang;
+  currentLang: TargetLang;
   onSelectPrompt: (text: string) => void;
 }
 
 const SAMPLE_PROMPTS: QuickPrompt[] = [
-  // English prompts
+  // 1. Korean
   {
-    id: '1',
+    id: 'ko-1',
+    category: 'business',
+    label: '음성/화면 확인 (KO)',
+    text: "제 목소리 잘 들리시나요? 화면 공유도 정상적으로 보이시는지 확인 부탁드립니다.",
+    lang: 'ko',
+  },
+  {
+    id: 'ko-2',
+    category: 'business',
+    label: '안건 진행 (KO)',
+    text: "다음 안건인 신규 기능 개발 일정 및 배포 계획으로 넘어가겠습니다.",
+    lang: 'ko',
+  },
+  // 2. English
+  {
+    id: 'en-1',
     category: 'business',
     label: '화면/음성 확인 (EN)',
     text: "Can everyone hear me clearly and see my shared screen?",
     lang: 'en',
   },
   {
-    id: '2',
+    id: 'en-2',
     category: 'business',
     label: '안건 진행 (EN)',
-    text: "Let's move on to the next agenda item regarding the Q4 product roadmap.",
+    text: "Let's move on to the next agenda item regarding the product roadmap.",
     lang: 'en',
   },
+  // 3. Japanese
   {
-    id: '3',
+    id: 'ja-1',
     category: 'business',
-    label: '음성 끊김 재확인 (EN)',
-    text: "Sorry, your voice was breaking up for a second. Could you repeat that last point?",
-    lang: 'en',
+    label: '회의 인사 (JA)',
+    text: "本日はお時間をいただき、ありがとうございます。よろしくお願いいたします。",
+    lang: 'ja',
   },
   {
-    id: '4',
+    id: 'ja-2',
     category: 'business',
-    label: '회의록 후속 조치 (EN)',
-    text: "I'll follow up with the detailed action items and send over the summary email.",
-    lang: 'en',
+    label: '화면 확인 (JA)',
+    text: "画面の共有は問題なく見えていますでしょうか？",
+    lang: 'ja',
   },
-  // Korean prompts
+  // 4. Chinese
   {
-    id: '5',
+    id: 'zh-1',
     category: 'business',
-    label: '화면/음성 확인 (KO)',
-    text: "제 목소리 잘 들리시나요? 화면 공유도 정상적으로 보이시는지 확인 부탁드립니다.",
-    lang: 'ko',
-  },
-  {
-    id: '6',
-    category: 'business',
-    label: '안건 진행 (KO)',
-    text: "다음 안건인 신규 기능 개발 일정 및 배포 계획으로 넘어가겠습니다.",
-    lang: 'ko',
+    label: '음성 확인 (ZH)',
+    text: "大家早上好！请问能清楚听到我的声音和看到共享屏幕吗？",
+    lang: 'zh',
   },
   {
-    id: '7',
+    id: 'zh-2',
     category: 'business',
-    label: '질문/피드백 (KO)',
-    text: "이 부분에 대해 다른 의견이나 추가 질문 있으신 분 계신가요?",
-    lang: 'ko',
+    label: '안건 진행 (ZH)',
+    text: "那我们接下来讨论下一个会议议题和具体计划。",
+    lang: 'zh',
+  },
+  // 5. French
+  {
+    id: 'fr-1',
+    category: 'business',
+    label: '회의 인사 (FR)',
+    text: "Bonjour à tous! Merci de vous être joints à cette réunion.",
+    lang: 'fr',
   },
   {
-    id: '8',
+    id: 'fr-2',
     category: 'business',
-    label: '회의 마무리 (KO)',
-    text: "오늘 회의 참석해 주셔서 감사합니다. 논의된 내용은 메일로 정리해서 공유하겠습니다.",
-    lang: 'ko',
+    label: '음성 확인 (FR)',
+    text: "Est-ce que tout le monde m'entend bien et voit mon écran partagé?",
+    lang: 'fr',
   },
 ];
 
-export const QuickChips: React.FC<QuickChipsProps> = ({ sourceLang, onSelectPrompt }) => {
-  const currentLang = sourceLang === 'ko' ? 'ko' : 'en';
-  const displayedPrompts = SAMPLE_PROMPTS.filter((p) => sourceLang === 'auto' || p.lang === currentLang);
+export const QuickChips: React.FC<QuickChipsProps> = ({ currentLang, onSelectPrompt }) => {
+  // 현재 선택된 언어의 칩들을 우선 표시
+  const displayedPrompts = SAMPLE_PROMPTS.filter((p) => p.lang === currentLang);
+  const fallbackPrompts = SAMPLE_PROMPTS.filter((p) => p.lang !== currentLang).slice(0, 4);
+  const promptsToShow = displayedPrompts.length > 0 ? displayedPrompts : fallbackPrompts;
 
   return (
     <div className="quick-chips-container">
       <span className="chips-title">회의 예시:</span>
       <div className="chips-list">
-        {displayedPrompts.map((prompt) => (
+        {promptsToShow.map((prompt) => (
           <button
             key={prompt.id}
             type="button"

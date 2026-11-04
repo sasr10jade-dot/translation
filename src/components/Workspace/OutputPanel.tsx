@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Volume2, VolumeX, Copy, Check, Clock, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
-import { TranslationStatus, TranslationEngine, TranslationTone, TargetLang } from '../../types';
+import { TranslationStatus, TranslationEngine, TranslationTone, TargetLang, LANGUAGES_MAP } from '../../types';
 
 interface OutputPanelProps {
   translatedText: string;
@@ -57,17 +57,17 @@ export const OutputPanel: React.FC<OutputPanelProps> = ({
     }
   };
 
-  const isKoTarget = targetLang === 'ko';
+  const targetMeta = LANGUAGES_MAP[targetLang] || LANGUAGES_MAP.ko;
 
   return (
     <div className="workspace-panel output-panel">
       {/* Panel Top bar */}
       <div className="panel-header">
         <div className="panel-header-left">
-          <span className={`lang-tag ${isKoTarget ? 'ko' : 'en'}`}>
-            {isKoTarget ? '한국어 (KO)' : '영어 (EN)'}
+          <span className={`lang-tag ${targetLang}`}>
+            {targetMeta.flag} {targetMeta.label}
           </span>
-          <span className="panel-title">{isKoTarget ? '실시간 한국어 번역' : '실시간 영어 번역'}</span>
+          <span className="panel-title">실시간 {targetMeta.label} 번역</span>
         </div>
 
         {/* Translation Meta & Font controls */}

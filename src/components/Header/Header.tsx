@@ -39,6 +39,8 @@ interface HeaderProps {
   onTogglePip: () => void;
   onChangeViewMode: (mode: ViewMode) => void;
   onChangeFontScale: (delta: number) => void;
+  onSelectSourceLang: (lang: SupportedLang) => void;
+  onSelectTargetLang: (lang: TargetLang) => void;
   onSwapLanguages: () => void;
   onToggleHistory: () => void;
   onOpenSettings: () => void;
@@ -62,6 +64,8 @@ export const Header: React.FC<HeaderProps> = ({
   onTogglePip,
   onChangeViewMode,
   onChangeFontScale,
+  onSelectSourceLang,
+  onSelectTargetLang,
   onSwapLanguages,
   onToggleHistory,
   onOpenSettings,
@@ -109,24 +113,43 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Center: Language Direction & Swap */}
+      {/* Center: 5-Language Selectors & Swap */}
       <div className="header-lang-swap-bar">
+        <select
+          value={sourceLang}
+          onChange={(e) => onSelectSourceLang(e.target.value as SupportedLang)}
+          className="lang-select-dropdown source"
+          title="원문 언어 선택"
+        >
+          <option value="auto">🌐 자동 감지</option>
+          <option value="ko">🇰🇷 한국어</option>
+          <option value="en">🇺🇸 영어</option>
+          <option value="ja">🇯🇵 일본어</option>
+          <option value="zh">🇨🇳 중국어</option>
+          <option value="fr">🇫🇷 프랑스어</option>
+        </select>
+
         <button
           type="button"
-          className="lang-swap-btn"
+          className="lang-swap-icon-btn"
           onClick={onSwapLanguages}
-          title="언어 방향 전환 (영어 ⇄ 한국어)"
+          title="언어 방향 맞바꾸기"
         >
-          <span className={`lang-chip ${sourceLang === 'en' ? 'active-en' : sourceLang === 'ko' ? 'active-ko' : 'active-auto'}`}>
-            {sourceLang === 'auto' ? '자동 감지' : sourceLang === 'en' ? '영어 (EN)' : '한국어 (KO)'}
-          </span>
-          <div className="swap-icon-circle">
-            <ArrowLeftRight size={14} />
-          </div>
-          <span className={`lang-chip ${targetLang === 'ko' ? 'active-ko' : 'active-en'}`}>
-            {targetLang === 'ko' ? '한국어 (KO)' : '영어 (EN)'}
-          </span>
+          <ArrowLeftRight size={14} />
         </button>
+
+        <select
+          value={targetLang}
+          onChange={(e) => onSelectTargetLang(e.target.value as TargetLang)}
+          className="lang-select-dropdown target"
+          title="번역할 대상 언어 선택"
+        >
+          <option value="ko">🇰🇷 한국어</option>
+          <option value="en">🇺🇸 영어</option>
+          <option value="ja">🇯🇵 일본어</option>
+          <option value="zh">🇨🇳 중국어</option>
+          <option value="fr">🇫🇷 프랑스어</option>
+        </select>
       </div>
 
       {/* Right Controls */}
