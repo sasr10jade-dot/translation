@@ -8,11 +8,12 @@ import {
   PictureInPicture2,
   Sparkles,
   BookMarked,
-  Download,
   CheckCircle2,
   HelpCircle,
   ArrowRight,
   Headphones,
+  Users,
+  Send,
 } from 'lucide-react';
 import './UserGuideModal.css';
 
@@ -27,7 +28,7 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
   onClose,
   onOpenSettings,
 }) => {
-  const [activeTab, setActiveTab] = useState<'voice' | 'shortcuts' | 'modes' | 'features'>('voice');
+  const [activeTab, setActiveTab] = useState<'voice' | 'shortcuts' | 'modes' | 'intelligence'>('voice');
 
   if (!isOpen) return null;
 
@@ -38,8 +39,8 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
         <div className="modal-header">
           <div className="modal-title-group">
             <BookOpen size={20} className="modal-icon guide-book-icon" />
-            <h3 className="modal-title">LiveLingua KR 종합 사용자 가이드</h3>
-            <span className="guide-version-badge">PRO 매뉴얼</span>
+            <h3 className="modal-title">LiveLingua KR 공식 사용자 가이드북</h3>
+            <span className="guide-version-badge">최신 현행화</span>
           </div>
           <button type="button" className="modal-close-btn" onClick={onClose}>
             <X size={20} />
@@ -53,15 +54,15 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
             className={`guide-tab-btn ${activeTab === 'voice' ? 'active' : ''}`}
             onClick={() => setActiveTab('voice')}
           >
-            <Mic size={15} />
-            <span>음성 인식 & 마이크</span>
+            <Mic size={14} />
+            <span>음성 & 5개국어 마이크</span>
           </button>
           <button
             type="button"
             className={`guide-tab-btn ${activeTab === 'shortcuts' ? 'active' : ''}`}
             onClick={() => setActiveTab('shortcuts')}
           >
-            <Keyboard size={15} />
+            <Keyboard size={14} />
             <span>무전기(PTT) & 단축키</span>
           </button>
           <button
@@ -69,38 +70,47 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
             className={`guide-tab-btn ${activeTab === 'modes' ? 'active' : ''}`}
             onClick={() => setActiveTab('modes')}
           >
-            <Tv size={15} />
+            <Tv size={14} />
             <span>4대 뷰 & PIP 자막</span>
           </button>
           <button
             type="button"
-            className={`guide-tab-btn ${activeTab === 'features' ? 'active' : ''}`}
-            onClick={() => setActiveTab('features')}
+            className={`guide-tab-btn ${activeTab === 'intelligence' ? 'active' : ''}`}
+            onClick={() => setActiveTab('intelligence')}
           >
-            <Sparkles size={15} />
-            <span>AI 회의록 & 사전 & PWA</span>
+            <Sparkles size={14} />
+            <span>AI 회의록 & Teams/Slack</span>
           </button>
         </div>
 
         {/* Modal Body with Rich Guides */}
         <div className="modal-body guide-modal-body">
-          {/* TAB 1: Voice & Microphone */}
+          {/* TAB 1: Voice & 5 Languages */}
           {activeTab === 'voice' && (
             <div className="guide-content-section">
-              <div className="guide-feature-card">
+              <div className="guide-feature-card highlight">
                 <div className="guide-card-header">
                   <div className="guide-icon-box cyan">
-                    <Mic size={18} />
+                    <Users size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">무제한 마이크 연속 청취 (24시간 유지)</h4>
-                    <p className="guide-feature-sub">사용자가 직접 끄기 전까지 침묵에도 절대 꺼지지 않습니다.</p>
+                    <h4 className="guide-feature-title">발화자 자동 분리 (나 vs 상대방)</h4>
+                    <p className="guide-feature-sub">대화 타임라인에서 내가 한 말과 상대방의 말이 명확히 나뉩니다.</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  브라우저의 자동 꺼짐 버그를 해결하여, 회의 중 몇 분 동안 침묵이 이어져도 마이크가 상시 대기합니다.
-                  오직 사용자가 직접 <strong>[마이크 끄기]</strong>를 누를 때만 마이크가 안전하게 종료됩니다.
+                  마이크 상단의 <strong>[👤 나 (Me)] ⇄ [👥 상대방]</strong> 스위치를 탭하여 발화 주체를 전환하세요:
                 </p>
+                <div className="guide-tips-list">
+                  <div className="guide-tip-row">
+                    <span className="tip-badge">👤 나 (Me)</span>
+                    <span>우측 인디고 말풍선에 배치되어 내 발언이 기록됩니다.</span>
+                  </div>
+                  <div className="guide-tip-row">
+                    <span className="tip-badge en">👥 상대방</span>
+                    <span>좌측 시안/글래스 말풍선에 배치되어 외국인 동료의 발언이 기록됩니다.</span>
+                  </div>
+                </div>
               </div>
 
               <div className="guide-feature-card">
@@ -109,34 +119,27 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                     <ArrowRight size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">마이크 인식 언어 원터치 전환 (0.1초 전환)</h4>
-                    <p className="guide-feature-sub">말하는 사람에 따라 마이크 언어를 즉시 변경하세요.</p>
+                    <h4 className="guide-feature-title">5개국어 마이크 음성 인식 (STT)</h4>
+                    <p className="guide-feature-sub">국가별 원어민 발음을 정밀하게 수음합니다.</p>
                   </div>
                 </div>
-                <div className="guide-tips-list">
-                  <div className="guide-tip-row">
-                    <span className="tip-badge">내가 말할 때</span>
-                    <span>마이크 옆 <strong>[🇰🇷 한국어 음성]</strong> 클릭 ➔ 한국어 발음을 100% 수음하여 영어로 번역</span>
-                  </div>
-                  <div className="guide-tip-row">
-                    <span className="tip-badge en">외국인이 말할 때</span>
-                    <span>마이크 옆 <strong>[🇺🇸 영어 음성]</strong> 클릭 ➔ 원어민 영어 발음을 100% 수음하여 한국어로 번역</span>
-                  </div>
-                </div>
+                <p className="guide-text">
+                  마이크 옆 언어 선택창에서 <strong>🇰🇷 한국어, 🇺🇸 영어, 🇯🇵 일본어, 🇨🇳 중국어, 🇫🇷 프랑스어</strong> 중 말할 언어를 선택하면, 해당 국가의 음운 엔진이 100% 최적화되어 수음합니다.
+                </p>
               </div>
 
-              <div className="guide-feature-card highlight">
+              <div className="guide-feature-card">
                 <div className="guide-card-header">
                   <div className="guide-icon-box amber">
                     <Headphones size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">화상 회의 상대방 스피커 소리 캡처 팁</h4>
-                    <p className="guide-feature-sub">Zoom, Teams 상대방의 목소리를 번역기에 입력하는 법</p>
+                    <h4 className="guide-feature-title">Teams 및 Zoom 회의 상대방 소리 캡처 팁</h4>
+                    <p className="guide-feature-sub">상대방 스피커 소리를 번역기에 직결하는 법</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  Windows 작업표시줄 스피커 우클릭 ➔ <strong>[소리 설정]</strong> ➔ 입력 장치에서 <strong>'스테레오 믹스 (Stereo Mix)'</strong>를 기본으로 켜두시면, 헤드셋 없이도 컴퓨터에서 나오는 상대방의 영어 소리가 번역기로 직결됩니다.
+                  Windows 작업표시줄 스피커 우클릭 ➔ <strong>[소리 설정]</strong> ➔ 입력 장치에서 <strong>'스테레오 믹스 (Stereo Mix)'</strong>를 기본 마이크로 설정하시면, 상대방의 목소리가 번역기로 직결 수음됩니다.
                 </p>
               </div>
             </div>
@@ -151,25 +154,25 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                     <Mic size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">무전기 모드 (Push-to-Talk) 활용법</h4>
-                    <p className="guide-feature-sub">키보드 소음과 주변 잡음을 100% 차단하는 프로 회의 팁</p>
+                    <h4 className="guide-feature-title">무전기 모드 (Push-to-Talk) 활용</h4>
+                    <p className="guide-feature-sub">키보드 타건 소음과 주변 잡음을 100% 차단</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  상단 [설정 ⚙️]에서 <strong>[무전기 모드]</strong>를 활성화하면:
+                  [설정 ⚙️]에서 <strong>[무전기 모드]</strong>를 활성화하면:
                 </p>
                 <div className="shortcut-box">
                   <div className="key-cap large">Spacebar (누르고 있는 동안)</div>
-                  <span className="shortcut-desc">마이크가 켜져 내 목소리를 듣습니다.</span>
+                  <span className="shortcut-desc">마이크가 켜져 목소리를 수음합니다.</span>
                 </div>
                 <div className="shortcut-box">
                   <div className="key-cap large">Spacebar (손을 떼면)</div>
-                  <span className="shortcut-desc">마이크가 꺼지며 즉시 고품질 번역이 완성됩니다.</span>
+                  <span className="shortcut-desc">마이크가 꺼지며 즉시 고품질 번역을 생성합니다.</span>
                 </div>
               </div>
 
               <div className="guide-feature-card">
-                <h4 className="guide-feature-title">⚡ 필수 글로벌 단축키 모음</h4>
+                <h4 className="guide-feature-title">⚡ 필수 업무 단축키</h4>
                 <div className="shortcuts-table">
                   <div className="shortcut-table-row">
                     <div className="keys-wrap">
@@ -179,7 +182,7 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                       <span className="key-plus">+</span>
                       <span className="key-cap">S</span>
                     </div>
-                    <span className="action-desc">번역 방향 즉시 맞교환 (영어 ⇄ 한국어)</span>
+                    <span className="action-desc">언어 방향 즉시 맞교환 (⇄ Swap)</span>
                   </div>
 
                   <div className="shortcut-table-row">
@@ -190,15 +193,14 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                       <span className="key-plus">+</span>
                       <span className="key-cap">C</span>
                     </div>
-                    <span className="action-desc">번역된 결과 텍스트를 클립보드에 즉시 복사</span>
+                    <span className="action-desc">번역된 결과 텍스트 즉시 복사</span>
                   </div>
 
                   <div className="shortcut-table-row">
                     <div className="keys-wrap">
-                      <span className="key-cap">F11</span>
-                      <span className="key-desc">또는 [화면 키우기]</span>
+                      <span className="key-cap">헤더 [A-] [A+]</span>
                     </div>
-                    <span className="action-desc">모니터 전체를 꽉 채우는 Fullscreen 듀얼 뷰 전환</span>
+                    <span className="action-desc">글자 크기 80% ~ 150% 원클릭 실시간 확대/축소</span>
                   </div>
                 </div>
               </div>
@@ -214,92 +216,91 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                     <PictureInPicture2 size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">크롬 PIP 플로팅 자막 (최상단 고정)</h4>
-                    <p className="guide-feature-sub">다른 창(Zoom, PPT)을 전체화면으로 띄워도 항상 보입니다.</p>
+                    <h4 className="guide-feature-title">크롬 PIP 플로팅 자막 (Always-on-top)</h4>
+                    <p className="guide-feature-sub">다른 창(Teams, Zoom, PPT) 위에도 항상 떠 있습니다.</p>
                   </div>
                 </div>
                 <p className="guide-text">
                   헤더의 <strong>[PIP 자막]</strong> 버튼을 누르면 브라우저 바깥으로 작은 자막 창이 분리됩니다.
-                  노트북 모니터가 1개뿐이어도 회의 발표 화면을 가리지 않고 상대방의 말을 자막처럼 실시간으로 볼 수 있습니다.
+                  노트북 모니터가 1개뿐이어도 회의 발표 화면을 가리지 않고 상대방의 말을 자막처럼 실시간으로 확인하실 수 있습니다.
                 </p>
               </div>
 
               <div className="guide-feature-card">
-                <h4 className="guide-feature-title">🖥️ 4대 맞춤 뷰 모드 비교</h4>
+                <h4 className="guide-feature-title">🖥️ 4대 맞춤 화면 모드</h4>
                 <div className="modes-grid-guide">
                   <div className="mode-guide-item">
                     <span className="mode-name">1. 일반 모드 (기본)</span>
-                    <p className="mode-desc">아늑한 여백과 정갈한 카드 패널로 구성된 표준 업무용 레이아웃.</p>
+                    <p className="mode-desc">정갈한 카드 패널로 구성된 표준 업무 및 타이핑 번역용 뷰.</p>
                   </div>
                   <div className="mode-guide-item">
                     <span className="mode-name">2. 대형 50:50 모드</span>
                     <p className="mode-desc">모니터 전체를 좌우로 꽉 채워 원거리에서도 시원하게 보이는 듀얼 스크린.</p>
                   </div>
                   <div className="mode-guide-item">
-                    <span className="mode-name">3. 스트림 모드</span>
-                    <p className="mode-desc">카카오톡/슬랙처럼 발화가 타임라인 순서로 착착 누적되는 대화 피드.</p>
+                    <span className="mode-name">3. 스트림 모드 (회의 타임라인)</span>
+                    <p className="mode-desc">카카오톡/슬랙처럼 발화와 뉘앙스 코치가 시간순으로 누적되는 대화 피드.</p>
                   </div>
                   <div className="mode-guide-item">
                     <span className="mode-name">4. 자막 HUD 모드</span>
-                    <p className="mode-desc">화상 회의 창 위에 반투명하게 얹어두는 넷플릭스 스타일 하단 자막 바.</p>
+                    <p className="mode-desc">화상 회의 창 위에 얹어두는 넷플릭스 스타일의 반투명 하단 자막 바.</p>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB 4: AI Summary, Glossary, PWA */}
-          {activeTab === 'features' && (
+          {/* TAB 4: Intelligence & Teams/Slack */}
+          {activeTab === 'intelligence' && (
             <div className="guide-content-section">
               <div className="guide-feature-card highlight">
                 <div className="guide-card-header">
-                  <div className="guide-icon-box purple">
+                  <div className="guide-icon-box amber">
                     <Sparkles size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">AI 회의록 3줄 요약 & Action Items 추출</h4>
-                    <p className="guide-feature-sub">회의가 끝난 후 1초 만에 요약 보고서를 생성하세요.</p>
+                    <h4 className="guide-feature-title">글로벌 비즈니스 문화 & 뉘앙스 코치</h4>
+                    <p className="guide-feature-sub">직역하면 오해하기 쉬운 동서양 완곡 표현을 자동 해설</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  상단 모드에서 <strong>[스트림]</strong> 선택 ➔ <strong>[AI 회의록 3줄 요약]</strong> 버튼을 누르면:
+                  스트림 모드에서 회의 중 문화적 주의가 필요한 표현이 감지되면 <strong>황금빛 해설 카드</strong>가 자동으로 나타납니다:
                 </p>
                 <ul className="guide-bullets">
-                  <li>📌 <strong>핵심 논의 안건 (3줄 요약)</strong></li>
-                  <li>✅ <strong>후속 조치 사항 (To-do 체크리스트)</strong></li>
+                  <li>🇯🇵 <strong>일본 비즈니스:</strong> <code>検討させていただきます (검토하겠습니다)</code> ➔ 사실상 완곡한 거절/보류 알림.</li>
+                  <li>🇺🇸 <strong>서양 비즈니스:</strong> <code>With all due respect</code> ➔ 강력한 반론 예고 신호.</li>
+                  <li>🇨🇳 <strong>중국 비즈니스:</strong> <code>哪里哪里</code> ➔ 겸양의 미덕 표현.</li>
                 </ul>
-                <p className="guide-text" style={{ marginTop: '0.4rem' }}>
-                  Markdown 파일 다운로드 또는 원클릭 복사로 팀원들에게 즉시 공유할 수 있습니다.
-                </p>
               </div>
 
               <div className="guide-feature-card">
                 <div className="guide-card-header">
-                  <div className="guide-icon-box amber">
-                    <BookMarked size={18} />
+                  <div className="guide-icon-box purple">
+                    <Send size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">사내 맞춤 전문 용어 사전 (Glossary)</h4>
-                    <p className="guide-feature-sub">고유명사나 사내 약어 오번역을 원천 차단합니다.</p>
+                    <h4 className="guide-feature-title">Microsoft Teams & Slack 웹훅 원클릭 자동 전송</h4>
+                    <p className="guide-feature-sub">회의 종료 후 1초 만에 팀 채널로 요약 보고서 발송</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  [설정 ⚙️] 하단에서 <code>K8s ➔ 쿠버네티스</code>, <code>PR ➔ 풀 리퀘스트</code> 처럼 사내 용어를 등록해 두시면, 번역 시 지정된 단어로 100% 자동 치환됩니다.
+                  [설정 ⚙️]에서 Teams 또는 Slack 웹훅 URL을 등록해 두시면,
+                  스트림 화면 ➔ <strong>[AI 회의록 3줄 요약]</strong> 창에서 <strong>[Teams 전송 🚀]</strong> 또는 <strong>[슬랙 전송]</strong> 버튼 클릭 한 번으로 핵심 안건과 To-do 목록이 팀 대화방으로 즉시 공유됩니다.
                 </p>
               </div>
 
               <div className="guide-feature-card">
                 <div className="guide-card-header">
                   <div className="guide-icon-box green">
-                    <Download size={18} />
+                    <BookMarked size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">바탕화면 PWA 앱 & 바로가기 파일</h4>
-                    <p className="guide-feature-sub">주소창 없이 PC 프로그램처럼 원클릭 실행</p>
+                    <h4 className="guide-feature-title">사내 맞춤 전문 용어 사전 (Glossary)</h4>
+                    <p className="guide-feature-sub">고유명사나 사내 약어 오번역을 원천 차단</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  상단 <strong>[앱 설치 (PWA)]</strong> 버튼을 눌러 브라우저 앱으로 설치하거나, <strong>.url 바로가기 파일</strong>을 다운로드하여 바탕화면에 두고 더블클릭으로 바로 실행하세요.
+                  [설정 ⚙️]에서 <code>K8s ➔ 쿠버네티스</code>, <code>PR ➔ 풀 리퀘스트</code> 등 사내 용어를 등록해 두시면, 번역 시 지정된 단어로 100% 자동 치환됩니다.
                 </p>
               </div>
             </div>
@@ -310,7 +311,7 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
         <div className="modal-footer guide-modal-footer">
           <div className="footer-left-hint">
             <HelpCircle size={15} />
-            <span>설정에서 번역 엔진, 어조, 단축키를 변경하실 수 있습니다.</span>
+            <span>설정에서 단축키, 웹훅, 전문용어 사전을 언제든 변경하실 수 있습니다.</span>
           </div>
           <div className="footer-right-group">
             <button
