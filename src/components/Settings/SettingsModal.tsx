@@ -357,6 +357,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* 6. Slack Webhook Integration */}
+            <div className="setting-section">
+              <label className="section-label">
+                <span>슬랙(Slack) 회의록 자동 전송 연동</span>
+              </label>
+              <p className="setting-sub-desc">
+                슬랙 인커밍 웹훅 URL을 등록하면, 회의 종료 시 AI 3줄 요약과 To-do 목록이 팀 슬랙 채널로 즉시 전송됩니다.
+              </p>
+              <input
+                type="text"
+                placeholder="https://hooks.slack.com/services/T.../B.../..."
+                value={settings.slackWebhookUrl || ''}
+                onChange={(e) => onSave({ ...settings, slackWebhookUrl: e.target.value.trim() })}
+                className="glossary-input"
+                style={{ width: '100%', boxSizing: 'border-box' }}
+              />
+            </div>
           </div>
 
           {/* Modal Footer */}

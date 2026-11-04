@@ -12,6 +12,7 @@ interface InputPanelProps {
   targetLang?: TargetLang;
   detectedLang: TargetLang;
   speechLang: SpeechLangCode;
+  speakerRole: 'me' | 'partner';
   isListening: boolean;
   volume: number;
   visualizerService: AudioVisualizerService;
@@ -19,6 +20,7 @@ interface InputPanelProps {
   onTextChange: (newText: string) => void;
   onToggleMic: () => void;
   onChangeSpeechLang: (lang: SpeechLangCode) => void;
+  onToggleSpeakerRole: () => void;
   onClearText: () => void;
   onSelectPrompt: (promptText: string) => void;
   onPasteClipboard: () => void;
@@ -30,6 +32,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   sourceLang,
   detectedLang,
   speechLang,
+  speakerRole,
   isListening,
   volume,
   visualizerService,
@@ -37,6 +40,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   onTextChange,
   onToggleMic,
   onChangeSpeechLang,
+  onToggleSpeakerRole,
   onClearText,
   onSelectPrompt,
   onPasteClipboard,
@@ -69,6 +73,16 @@ export const InputPanel: React.FC<InputPanelProps> = ({
 
         {/* Mic Control & 5-Language Speech Selector */}
         <div className="mic-control-wrapper">
+          {/* Speaker Role Switcher (나 vs 상대방) */}
+          <button
+            type="button"
+            className={`speaker-role-btn ${speakerRole}`}
+            onClick={onToggleSpeakerRole}
+            title="현재 발화 주체 전환 (내가 말하기 vs 상대방 듣기)"
+          >
+            <span>{speakerRole === 'me' ? '👤 나 (Me)' : '👥 상대방'}</span>
+          </button>
+
           {/* 5-Language Speech Lang Dropdown */}
           <select
             value={speechLang}

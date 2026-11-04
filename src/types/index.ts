@@ -6,6 +6,7 @@ export type SupportedLang = 'auto' | 'ko' | 'en' | 'ja' | 'zh' | 'fr';
 export type TargetLang = 'ko' | 'en' | 'ja' | 'zh' | 'fr';
 export type ViewMode = 'normal' | 'wide' | 'hud' | 'stream';
 export type AppTheme = 'dark' | 'light';
+export type SpeakerRole = 'me' | 'partner';
 
 export type SpeechLangCode = 'ko-KR' | 'en-US' | 'ja-JP' | 'zh-CN' | 'fr-FR';
 
@@ -24,6 +25,13 @@ export const LANGUAGES_MAP: Record<TargetLang, LanguageMeta> = {
   zh: { code: 'zh', label: '중국어', flag: '🇨🇳', speechCode: 'zh-CN', greeting: '你好' },
   fr: { code: 'fr', label: '프랑스어', flag: '🇫🇷', speechCode: 'fr-FR', greeting: 'Bonjour' },
 };
+
+export interface NuanceTip {
+  keyword: string;
+  culture: 'ko' | 'en' | 'ja' | 'zh' | 'fr';
+  title: string;
+  explanation: string;
+}
 
 export interface GlossaryItem {
   id: string;
@@ -46,6 +54,8 @@ export interface TranslationRecord {
   sourceLang: SupportedLang;
   targetLang: TargetLang;
   sourceType: InputMode;
+  speaker: SpeakerRole;
+  nuanceTip?: NuanceTip;
   engine: TranslationEngine;
   tone: TranslationTone;
   latencyMs: number;
@@ -65,6 +75,7 @@ export interface AppSettings {
   fontScale: number;
   pushToTalk: boolean;
   glossary: GlossaryItem[];
+  slackWebhookUrl: string; // 슬랙 채널 실시간 회의록 전송 웹훅 URL
 }
 
 export interface AudioVisualizerState {

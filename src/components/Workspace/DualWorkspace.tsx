@@ -11,6 +11,7 @@ interface DualWorkspaceProps {
   targetLang: TargetLang;
   detectedLang: TargetLang;
   speechLang: SpeechLangCode;
+  speakerRole: 'me' | 'partner';
   viewMode: ViewMode;
 
   // Input props
@@ -23,6 +24,7 @@ interface DualWorkspaceProps {
   onTextChange: (newText: string) => void;
   onToggleMic: () => void;
   onChangeSpeechLang: (lang: SpeechLangCode) => void;
+  onToggleSpeakerRole: () => void;
   onClearText: () => void;
   onSelectPrompt: (promptText: string) => void;
   onPasteClipboard: () => void;
@@ -45,6 +47,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
   targetLang,
   detectedLang,
   speechLang,
+  speakerRole,
   viewMode,
   sourceText,
   interimText,
@@ -55,6 +58,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
   onTextChange,
   onToggleMic,
   onChangeSpeechLang,
+  onToggleSpeakerRole,
   onClearText,
   onSelectPrompt,
   onPasteClipboard,
@@ -80,6 +84,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
           targetLang={targetLang}
           detectedLang={detectedLang}
           speechLang={speechLang}
+          speakerRole={speakerRole}
           isListening={isListening}
           volume={volume}
           visualizerService={visualizerService}
@@ -87,6 +92,7 @@ export const DualWorkspace: React.FC<DualWorkspaceProps> = ({
           onTextChange={onTextChange}
           onToggleMic={onToggleMic}
           onChangeSpeechLang={onChangeSpeechLang}
+          onToggleSpeakerRole={onToggleSpeakerRole}
           onClearText={onClearText}
           onSelectPrompt={onSelectPrompt}
           onPasteClipboard={onPasteClipboard}

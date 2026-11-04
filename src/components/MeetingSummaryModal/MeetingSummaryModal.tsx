@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, CheckSquare, Copy, Check, Download, RefreshCw, FileText } from 'lucide-react';
+import { X, Sparkles, CheckSquare, Copy, Check, Download, RefreshCw, FileText, Send } from 'lucide-react';
 import { TranslationRecord, AppSettings, MeetingSummary } from '../../types';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { SlackService } from '../../services/slackService';
 import './MeetingSummaryModal.css';
 
 interface MeetingSummaryModalProps {
@@ -9,6 +10,7 @@ interface MeetingSummaryModalProps {
   records: TranslationRecord[];
   settings: AppSettings;
   onClose: () => void;
+  onOpenSettings: () => void;
 }
 
 export const MeetingSummaryModal: React.FC<MeetingSummaryModalProps> = ({
@@ -16,10 +18,34 @@ export const MeetingSummaryModal: React.FC<MeetingSummaryModalProps> = ({
   records,
   settings,
   onClose,
+  onOpenSettings,
 }) => {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState<MeetingSummary | null>(null);
   const [copied, setCopied] = useState(false);
+  const [slackSending, setSlackSending] = useState(false);
+  const [slackSuccess, setSlackSuccess] = useState(false);
+
+  const handleSendSlack = async () => {
+    if (!summary) return;
+    if (!settings.slackWebhookUrl.trim()) {
+      alert('슬랙 Webhook URL이 설정되지 않았습니다. [환경설정]에서 URL을 입력해 주세요.');
+      onClose();
+      onOpenSettings();
+      return;
+    }
+
+    setSlackSending(true);
+    try {
+      await SlackService.sendMeetingSummary(settings.slackWebhookUrl, summary, records.length);
+      setSlackSuccess(true);
+      setTimeout(() => setSlackSuccess(false), 3000);
+    } catch (err: any) {
+      alert(err.message || '슬랙 전송에 실패했습니다.');
+    } finally {
+      setSlackSending(false);
+    }
+  };
 
   const generateSummary = async () => {
     if (records.length === 0) return;
@@ -238,6 +264,17 @@ ${summary.actionItems.map((a) => `- [ ] ${a}`).join('\n')}
           </button>
 
           <div className="footer-right-buttons">
+            <button
+              type="button"
+              className={`modal-btn slack-send-btn ${slackSuccess ? 'success' : ''}`}
+              onClick={handleSendSlack}
+              disabled={!summary || loading || slackSending}
+              title="설정된 슬랙 채널로 회의록 요약 즉시 전송"
+            >
+              {slackSuccess ? <Check size={14} /> : <Send size={14} />}
+              <span>{slackSuccess ? '슬랙 전송 완료!' : slackSending ? '전송 중...' : '슬랙 전송'}</span>
+            </button>
+
             <button
               type="button"
               className="modal-btn secondary"

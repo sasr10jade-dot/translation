@@ -140,6 +140,74 @@
   background: rgba(6, 182, 212, 0.05);
 }
 
+/* Speaker Separation (나 vs 상대방) */
+.stream-bubble-pair.speaker-me {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.08);
+  border-left: 4px solid var(--accent-primary);
+}
+
+.stream-bubble-pair.speaker-partner {
+  border-left: 4px solid var(--accent-cyan);
+}
+
+.bubble-speaker.me {
+  color: #a5b4fc;
+}
+
+.bubble-speaker.partner {
+  color: #38bdf8;
+}
+
+/* Cultural Nuance Coach Card */
+.stream-nuance-card {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.85rem;
+  margin-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  animation: fadeIn 0.25s ease;
+}
+
+.nuance-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nuance-sparkle {
+  color: #f59e0b;
+}
+
+.nuance-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.nuance-explanation {
+  font-size: 0.78rem;
+  color: #fef3c7;
+  line-height: 1.45;
+}
+
+/* Light Theme Nuance Card */
+[data-theme='light'] .stream-nuance-card {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+[data-theme='light'] .nuance-title {
+  color: #b45309;
+}
+
+[data-theme='light'] .nuance-explanation {
+  color: #92400e;
+}
+
 .bubble-header {
   display: flex;
   align-items: center;

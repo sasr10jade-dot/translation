@@ -132,6 +132,23 @@
   gap: 0.5rem;
 }
 
+.slack-send-btn {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: #c7d2fe;
+}
+
+.slack-send-btn:hover:not(:disabled) {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+.slack-send-btn.success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: #6ee7b7;
+}
+
 /* Light Theme Overrides */
 [data-theme='light'] .summary-card {
   background: #ffffff;

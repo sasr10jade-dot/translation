@@ -107,10 +107,10 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
         )}
 
         {records.map((r) => (
-          <div key={r.id} className="stream-bubble-pair">
+          <div key={r.id} className={`stream-bubble-pair ${r.speaker === 'me' ? 'speaker-me' : 'speaker-partner'}`}>
             <div className="bubble-header">
-              <span className="bubble-speaker">
-                {r.sourceLang === 'ko' ? '🇰🇷 발화자 (KO)' : '🇺🇸 발화자 (EN)'}
+              <span className={`bubble-speaker ${r.speaker}`}>
+                {r.speaker === 'me' ? '👤 나 (Me)' : '👥 상대방 (Partner)'} · {r.sourceLang.toUpperCase()} ➔ {r.targetLang.toUpperCase()}
               </span>
               <span className="bubble-time">{formatTime(r.timestamp)}</span>
             </div>
@@ -134,6 +134,17 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
                 <Volume2 size={14} />
               </button>
             </div>
+
+            {/* Business Cultural Nuance Coach Card */}
+            {r.nuanceTip && (
+              <div className="stream-nuance-card" title="글로벌 비즈니스 문화 뉘앙스 해설">
+                <div className="nuance-header">
+                  <Sparkles size={13} className="nuance-sparkle" />
+                  <span className="nuance-title">{r.nuanceTip.title}</span>
+                </div>
+                <p className="nuance-explanation">{r.nuanceTip.explanation}</p>
+              </div>
+            )}
           </div>
         ))}
 

@@ -17,12 +17,14 @@ import { PipSubtitleService } from './services/pipSubtitle';
 import { translationManager } from './services/translation';
 import { StorageService } from './services/storage';
 import { detectLanguage } from './utils/langDetect';
+import { detectNuanceTip } from './utils/nuanceCoach';
 import {
   AppSettings,
   AppTheme,
   SupportedLang,
   TargetLang,
   SpeechLangCode,
+  SpeakerRole,
   TranslationRecord,
   TranslationStatus,
   ViewMode,
@@ -37,6 +39,9 @@ export function App() {
 
   // View Mode: 'normal' (default), 'wide', 'hud', 'stream'
   const [viewMode, setViewMode] = useState<ViewMode>(settings.defaultViewMode || 'normal');
+
+  // Speaker Role: 'me' vs 'partner'
+  const [speakerRole, setSpeakerRole] = useState<SpeakerRole>('partner');
 
   // Font Scale state (0.8 ~ 1.5)
   const [fontScale, setFontScale] = useState<number>(settings.fontScale || 1.0);
@@ -255,6 +260,7 @@ export function App() {
         setStatus('success');
 
         if (result.translatedText) {
+          const tip = detectNuanceTip(trimmed) || detectNuanceTip(result.translatedText);
           const newRecord: TranslationRecord = {
             id: `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
             timestamp: Date.now(),
@@ -263,6 +269,8 @@ export function App() {
             sourceLang: effectiveSrc,
             targetLang: effectiveTgt,
             sourceType,
+            speaker: speakerRole,
+            nuanceTip: tip,
             engine: result.engine,
             tone: settings.tone,
             latencyMs: result.latencyMs,
@@ -340,6 +348,16 @@ export function App() {
     const codes: SpeechLangCode[] = ['ko-KR', 'en-US', 'ja-JP', 'zh-CN', 'fr-FR'];
     const nextIdx = (codes.indexOf(speechLang) + 1) % codes.length;
     handleChangeSpeechLang(codes[nextIdx]);
+  };
+
+  const handleToggleSpeakerRole = () => {
+    const next = speakerRole === 'partner' ? 'me' : 'partner';
+    setSpeakerRole(next);
+    showToast(
+      next === 'me'
+        ? '현재 발화자가 [👤 나 (Me)]로 지정되었습니다.'
+        : '현재 발화자가 [👥 상대방 (Partner)]으로 지정되었습니다.'
+    );
   };
 
   // Mic Toggle Handler (Mobile resource conflict resolved)
@@ -581,6 +599,7 @@ export function App() {
             targetLang={targetLang}
             detectedLang={detectedLang}
             speechLang={speechLang}
+            speakerRole={speakerRole}
             viewMode={viewMode}
             sourceText={sourceText}
             interimText={interimText}
@@ -591,6 +610,7 @@ export function App() {
             onTextChange={handleTextChange}
             onToggleMic={handleToggleMic}
             onChangeSpeechLang={handleChangeSpeechLang}
+            onToggleSpeakerRole={handleToggleSpeakerRole}
             onClearText={handleClearText}
             onSelectPrompt={handleSelectPrompt}
             onPasteClipboard={handlePasteClipboard}
@@ -691,6 +711,7 @@ export function App() {
         records={records}
         settings={settings}
         onClose={() => setShowSummaryModal(false)}
+        onOpenSettings={() => setShowSettings(true)}
       />
 
       {/* Comprehensive User Guide Modal */}
