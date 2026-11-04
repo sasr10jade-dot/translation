@@ -3,6 +3,7 @@ import { X, Sparkles, CheckSquare, Copy, Check, Download, RefreshCw, FileText, S
 import { TranslationRecord, AppSettings, MeetingSummary } from '../../types';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SlackService } from '../../services/slackService';
+import { TeamsService } from '../../services/teamsService';
 import './MeetingSummaryModal.css';
 
 interface MeetingSummaryModalProps {
@@ -25,6 +26,8 @@ export const MeetingSummaryModal: React.FC<MeetingSummaryModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [slackSending, setSlackSending] = useState(false);
   const [slackSuccess, setSlackSuccess] = useState(false);
+  const [teamsSending, setTeamsSending] = useState(false);
+  const [teamsSuccess, setTeamsSuccess] = useState(false);
 
   const handleSendSlack = async () => {
     if (!summary) return;
@@ -44,6 +47,27 @@ export const MeetingSummaryModal: React.FC<MeetingSummaryModalProps> = ({
       alert(err.message || '슬랙 전송에 실패했습니다.');
     } finally {
       setSlackSending(false);
+    }
+  };
+
+  const handleSendTeams = async () => {
+    if (!summary) return;
+    if (!settings.teamsWebhookUrl.trim()) {
+      alert('Microsoft Teams Webhook URL이 설정되지 않았습니다. [환경설정]에서 Teams Webhook URL을 입력해 주세요.');
+      onClose();
+      onOpenSettings();
+      return;
+    }
+
+    setTeamsSending(true);
+    try {
+      await TeamsService.sendMeetingSummary(settings.teamsWebhookUrl, summary, records.length);
+      setTeamsSuccess(true);
+      setTimeout(() => setTeamsSuccess(false), 3000);
+    } catch (err: any) {
+      alert(err.message || 'Teams 전송에 실패했습니다.');
+    } finally {
+      setTeamsSending(false);
     }
   };
 
@@ -264,6 +288,17 @@ ${summary.actionItems.map((a) => `- [ ] ${a}`).join('\n')}
           </button>
 
           <div className="footer-right-buttons">
+            <button
+              type="button"
+              className={`modal-btn teams-send-btn ${teamsSuccess ? 'success' : ''}`}
+              onClick={handleSendTeams}
+              disabled={!summary || loading || teamsSending}
+              title="설정된 Microsoft Teams 채널로 회의록 요약 즉시 전송"
+            >
+              {teamsSuccess ? <Check size={14} /> : <Send size={14} />}
+              <span>{teamsSuccess ? 'Teams 전송 완료!' : teamsSending ? '전송 중...' : 'Teams 전송'}</span>
+            </button>
+
             <button
               type="button"
               className={`modal-btn slack-send-btn ${slackSuccess ? 'success' : ''}`}

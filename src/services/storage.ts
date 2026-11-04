@@ -23,6 +23,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     { id: '3', sourceWord: 'MSA', targetWord: '마이크로서비스 아키텍처', enabled: true },
   ],
   slackWebhookUrl: '',
+  teamsWebhookUrl: '',
 };
 
 export const StorageService = {

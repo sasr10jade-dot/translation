@@ -375,6 +375,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 style={{ width: '100%', boxSizing: 'border-box' }}
               />
             </div>
+
+            {/* 7. Microsoft Teams Webhook Integration */}
+            <div className="setting-section">
+              <label className="section-label">
+                <span>Microsoft Teams(팀즈) 회의록 자동 전송 연동</span>
+              </label>
+              <p className="setting-sub-desc">
+                팀즈 채널의 인커밍 웹훅 URL을 등록하면, 회의 종료 시 3줄 요약과 To-do 목록이 팀즈 대화방으로 즉시 전송됩니다.
+              </p>
+              <input
+                type="text"
+                placeholder="https://...webhook.office.com/webhookb2/..."
+                value={settings.teamsWebhookUrl || ''}
+                onChange={(e) => onSave({ ...settings, teamsWebhookUrl: e.target.value.trim() })}
+                className="glossary-input"
+                style={{ width: '100%', boxSizing: 'border-box' }}
+              />
+            </div>
           </div>
 
           {/* Modal Footer */}

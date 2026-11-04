@@ -31,7 +31,7 @@ export const AudioGuideModal: React.FC<AudioGuideModalProps> = ({ isOpen, onClos
           {/* Method 1: Stereo Mix */}
           <div className="guide-card recommended">
             <div className="guide-card-header">
-              <span className="method-badge">방법 1 (가장 추천 - Zoom/Teams 앱용)</span>
+              <span className="method-badge">방법 1 (가장 추천 - Teams/Zoom 앱용)</span>
               <h4 className="guide-card-title">Windows 스테레오 믹스 (Stereo Mix) 활성화</h4>
             </div>
             <p className="guide-desc">
@@ -53,14 +53,14 @@ export const AudioGuideModal: React.FC<AudioGuideModalProps> = ({ isOpen, onClos
             </ol>
           </div>
 
-          {/* Method 2: Web Google Meet Tab audio */}
+          {/* Teams Web Guide */}
           <div className="guide-card">
             <div className="guide-card-header">
-              <span className="method-badge neutral">방법 2 (무설치 - Google Meet / 웹 회의)</span>
-              <h4 className="guide-card-title">Chrome 탭 / 스피커 소리 공유</h4>
+              <span className="method-badge teams">방법 2 (무설치 - Teams 웹 회의)</span>
+              <h4 className="guide-card-title">Microsoft Teams 웹(teams.microsoft.com) 연동</h4>
             </div>
             <p className="guide-desc">
-              Google Meet을 웹 브라우저 탭으로 열어 회의를 진행하고, 이어폰 대신 스피커로 소리를 켜두면 내 마이크가 상대방 목소리를 자연스럽게 수음하여 번역합니다.
+              Chrome 브라우저에서 Teams 웹 회의를 열고 스피커로 소리를 켜두면, 내 마이크가 상대방 목소리를 자연스럽게 수음하여 번역기로 실시간 전달합니다.
             </p>
           </div>
 

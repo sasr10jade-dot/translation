@@ -132,6 +132,23 @@
   gap: 0.5rem;
 }
 
+.teams-send-btn {
+  background: rgba(98, 100, 167, 0.2);
+  border-color: #6264a7;
+  color: #c7d2fe;
+}
+
+.teams-send-btn:hover:not(:disabled) {
+  background: #6264a7;
+  color: #ffffff;
+}
+
+.teams-send-btn.success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: #6ee7b7;
+}
+
 .slack-send-btn {
   background: rgba(99, 102, 241, 0.15);
   border-color: rgba(99, 102, 241, 0.35);

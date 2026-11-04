@@ -76,6 +76,7 @@ export interface AppSettings {
   pushToTalk: boolean;
   glossary: GlossaryItem[];
   slackWebhookUrl: string; // 슬랙 채널 실시간 회의록 전송 웹훅 URL
+  teamsWebhookUrl: string; // Microsoft Teams 채널 회의록 전송 웹훅 URL
 }
 
 export interface AudioVisualizerState {
