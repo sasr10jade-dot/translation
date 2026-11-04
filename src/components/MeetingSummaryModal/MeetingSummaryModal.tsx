@@ -4,6 +4,8 @@ import { TranslationRecord, AppSettings, MeetingSummary } from '../../types';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SlackService } from '../../services/slackService';
 import { TeamsService } from '../../services/teamsService';
+import { GoogleMeetService } from '../../services/googleMeetService';
+import { ZoomService } from '../../services/zoomService';
 import './MeetingSummaryModal.css';
 
 interface MeetingSummaryModalProps {
@@ -24,10 +26,56 @@ export const MeetingSummaryModal: React.FC<MeetingSummaryModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState<MeetingSummary | null>(null);
   const [copied, setCopied] = useState(false);
+  const [googleMeetSending, setGoogleMeetSending] = useState(false);
+  const [googleMeetSuccess, setGoogleMeetSuccess] = useState(false);
+  const [zoomSending, setZoomSending] = useState(false);
+  const [zoomSuccess, setZoomSuccess] = useState(false);
   const [slackSending, setSlackSending] = useState(false);
   const [slackSuccess, setSlackSuccess] = useState(false);
   const [teamsSending, setTeamsSending] = useState(false);
   const [teamsSuccess, setTeamsSuccess] = useState(false);
+
+  const handleSendGoogleMeet = async () => {
+    if (!summary) return;
+    if (!settings.googleMeetWebhookUrl.trim()) {
+      alert('Google Meet(Google Chat) Webhook URL이 설정되지 않았습니다. [환경설정]에서 URL을 입력해 주세요.');
+      onClose();
+      onOpenSettings();
+      return;
+    }
+
+    setGoogleMeetSending(true);
+    try {
+      await GoogleMeetService.sendMeetingSummary(settings.googleMeetWebhookUrl, summary, records.length);
+      setGoogleMeetSuccess(true);
+      setTimeout(() => setGoogleMeetSuccess(false), 3000);
+    } catch (err: any) {
+      alert(err.message || 'Google Meet 전송에 실패했습니다.');
+    } finally {
+      setGoogleMeetSending(false);
+    }
+  };
+
+  const handleSendZoom = async () => {
+    if (!summary) return;
+    if (!settings.zoomWebhookUrl.trim()) {
+      alert('Zoom Webhook URL이 설정되지 않았습니다. [환경설정]에서 Zoom Webhook URL을 입력해 주세요.');
+      onClose();
+      onOpenSettings();
+      return;
+    }
+
+    setZoomSending(true);
+    try {
+      await ZoomService.sendMeetingSummary(settings.zoomWebhookUrl, summary, records.length);
+      setZoomSuccess(true);
+      setTimeout(() => setZoomSuccess(false), 3000);
+    } catch (err: any) {
+      alert(err.message || 'Zoom 전송에 실패했습니다.');
+    } finally {
+      setZoomSending(false);
+    }
+  };
 
   const handleSendSlack = async () => {
     if (!summary) return;
@@ -181,9 +229,11 @@ ${dialogText}`;
 
   const getFullMarkdown = () => {
     if (!summary) return '';
+    const meetingUrl = settings.googleMeetUrl || settings.zoomUrl;
+    const meetingLine = meetingUrl ? `회의 링크: ${meetingUrl}\n` : '';
     return `# 📋 화상 회의록 요약 보고서
 일시: ${new Date().toLocaleString('ko-KR')}
-총 발화 수: ${records.length}건
+${meetingLine}총 발화 수: ${records.length}건
 
 ## 📌 핵심 논의 안건 (3줄 요약)
 ${summary.keyPoints.map((p, i) => `${i + 1}. ${p}`).join('\n')}
@@ -288,6 +338,28 @@ ${summary.actionItems.map((a) => `- [ ] ${a}`).join('\n')}
           </button>
 
           <div className="footer-right-buttons">
+            <button
+              type="button"
+              className={`modal-btn google-meet-send-btn ${googleMeetSuccess ? 'success' : ''}`}
+              onClick={handleSendGoogleMeet}
+              disabled={!summary || loading || googleMeetSending}
+              title="설정된 Google Meet (Google Chat) 스페이스로 회의록 요약 즉시 전송"
+            >
+              {googleMeetSuccess ? <Check size={14} /> : <Send size={14} />}
+              <span>{googleMeetSuccess ? 'Meet 전송 완료!' : googleMeetSending ? '전송 중...' : 'Google Meet 전송'}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`modal-btn zoom-send-btn ${zoomSuccess ? 'success' : ''}`}
+              onClick={handleSendZoom}
+              disabled={!summary || loading || zoomSending}
+              title="설정된 Zoom Team Chat 채널로 회의록 요약 즉시 전송"
+            >
+              {zoomSuccess ? <Check size={14} /> : <Send size={14} />}
+              <span>{zoomSuccess ? 'Zoom 전송 완료!' : zoomSending ? '전송 중...' : 'Zoom 전송'}</span>
+            </button>
+
             <button
               type="button"
               className={`modal-btn teams-send-btn ${teamsSuccess ? 'success' : ''}`}

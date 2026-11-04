@@ -309,6 +309,111 @@
   margin-top: 0.2rem;
 }
 
+/* Font Options Grid */
+.font-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.font-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.font-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.font-card.active {
+  background: rgba(99, 102, 241, 0.14);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.font-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.font-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.font-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-xs);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.font-tag.recommend {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.font-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.font-sample-preview {
+  margin-top: 0.35rem;
+  padding: 0.5rem 0.65rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px dashed var(--panel-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.font-card.active .font-sample-preview {
+  color: #ffffff;
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+[data-theme='light'] .font-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+[data-theme='light'] .font-card:hover {
+  background: #f8fafc;
+}
+
+[data-theme='light'] .font-card.active {
+  background: #f5f3ff;
+  border-color: var(--accent-primary);
+}
+
+[data-theme='light'] .font-sample-preview {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
 /* Toggle Switch */
 .toggle-row {
   display: flex;
@@ -493,6 +598,66 @@ input:checked + .switch-slider:before {
 
 .glossary-add-btn:hover {
   background: var(--accent-primary-hover);
+}
+
+/* Frequently Used Meeting URLs */
+.meeting-urls-section {
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.15rem;
+}
+
+.meeting-url-fields-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.meeting-url-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.url-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.url-brand-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-xs);
+}
+
+.url-brand-tag.meet {
+  background: rgba(15, 157, 88, 0.18);
+  color: #6ee7b7;
+  border: 1px solid rgba(15, 157, 88, 0.35);
+}
+
+.url-brand-tag.zoom {
+  background: rgba(45, 140, 255, 0.18);
+  color: #93c5fd;
+  border: 1px solid rgba(45, 140, 255, 0.35);
+}
+
+.url-set-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-full);
+}
+
+[data-theme='light'] .meeting-urls-section {
+  background: #f0fdfa;
+  border-color: #99f6e4;
 }
 
 /* Modal Footer */

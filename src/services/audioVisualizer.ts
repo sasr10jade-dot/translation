@@ -61,6 +61,29 @@ export class AudioVisualizerService {
     }
   }
 
+  public async startWithStream(stream: MediaStream): Promise<boolean> {
+    try {
+      this.stop();
+      this.mediaStream = stream;
+
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      this.audioContext = new AudioCtx();
+      this.analyser = this.audioContext.createAnalyser();
+      this.analyser.fftSize = 256;
+      this.analyser.smoothingTimeConstant = 0.8;
+
+      this.sourceNode = this.audioContext.createMediaStreamSource(this.mediaStream);
+      this.sourceNode.connect(this.analyser);
+
+      this.isRunning = true;
+      this.render();
+      return true;
+    } catch {
+      this.drawIdle();
+      return false;
+    }
+  }
+
   public stop() {
     this.isRunning = false;
 

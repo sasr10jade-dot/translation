@@ -118,6 +118,27 @@ export function App() {
     document.documentElement.style.setProperty('--font-scale', fontScale.toString());
   }, [fontScale]);
 
+  // Update global CSS font family & PIP subtitle font
+  useEffect(() => {
+    const font = settings.fontFamily || 'noto-sans';
+    let cssVar = 'var(--font-family-noto)';
+    let canvasFont = '"Noto Sans KR", "Noto Sans", sans-serif';
+
+    if (font === 'pretendard') {
+      cssVar = 'var(--font-family-pretendard)';
+      canvasFont = '"Pretendard", sans-serif';
+    } else if (font === 'nanum-gothic') {
+      cssVar = 'var(--font-family-nanum)';
+      canvasFont = '"Nanum Gothic", sans-serif';
+    } else if (font === 'system') {
+      cssVar = 'var(--font-family-system)';
+      canvasFont = 'system-ui, sans-serif';
+    }
+
+    document.documentElement.style.setProperty('--font-family', cssVar);
+    PipSubtitleService.getInstance().setFont(canvasFont);
+  }, [settings.fontFamily]);
+
   const handleChangeFontScale = (delta: number) => {
     setFontScale((prev) => {
       const next = Math.min(1.5, Math.max(0.8, Math.round((prev + delta) * 10) / 10));
@@ -648,6 +669,8 @@ export function App() {
             onSpeak={handleSpeak}
             onOpenSummary={() => setShowSummaryModal(true)}
             onExport={handleExportHistory}
+            googleMeetUrl={settings.googleMeetUrl}
+            zoomUrl={settings.zoomUrl}
           />
         </main>
       )}
@@ -666,6 +689,8 @@ export function App() {
           onToggleMic={handleToggleMic}
           onExitHUD={() => setViewMode('normal')}
           onSpeak={handleSpeak}
+          googleMeetUrl={settings.googleMeetUrl}
+          zoomUrl={settings.zoomUrl}
         />
       )}
 
@@ -691,9 +716,17 @@ export function App() {
         onSave={handleSaveSettings}
       />
 
-      {/* Audio Guide Modal for Video Conference Audio Routing */}
+      {/* Audio Guide & Video Meeting Hub Modal */}
       <AudioGuideModal
         isOpen={showAudioGuide}
+        isPipActive={isPipActive}
+        onTogglePip={handleTogglePip}
+        isListening={isListening}
+        onToggleMic={handleToggleMic}
+        visualizerService={visualizerService}
+        googleMeetUrl={settings.googleMeetUrl}
+        zoomUrl={settings.zoomUrl}
+        onOpenSettings={() => setShowSettings(true)}
         onClose={() => setShowAudioGuide(false)}
       />
 

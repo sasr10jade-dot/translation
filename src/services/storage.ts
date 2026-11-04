@@ -16,14 +16,19 @@ export const DEFAULT_SETTINGS: AppSettings = {
   debounceMs: 500,
   defaultViewMode: 'normal',
   fontScale: 1.0,
+  fontFamily: 'noto-sans',
   pushToTalk: false,
   glossary: [
     { id: '1', sourceWord: 'K8s', targetWord: '쿠버네티스', enabled: true },
     { id: '2', sourceWord: 'PR', targetWord: '풀 리퀘스트(코드 리뷰)', enabled: true },
     { id: '3', sourceWord: 'MSA', targetWord: '마이크로서비스 아키텍처', enabled: true },
   ],
+  googleMeetWebhookUrl: '',
+  zoomWebhookUrl: '',
   slackWebhookUrl: '',
   teamsWebhookUrl: '',
+  googleMeetUrl: '',
+  zoomUrl: '',
 };
 
 export const StorageService = {

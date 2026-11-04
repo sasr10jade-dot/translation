@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Key, Check, AlertCircle, Eye, EyeOff, Save, Volume2, Sliders } from 'lucide-react';
-import { AppSettings, TranslationEngine, TranslationTone } from '../../types';
+import { X, Sparkles, Key, Check, AlertCircle, Eye, EyeOff, Save, Volume2, Sliders, Type, Video } from 'lucide-react';
+import { AppSettings, TranslationEngine, TranslationTone, AppFontFamily } from '../../types';
 import { GeminiTranslatorService } from '../../services/translation/geminiTranslator';
 import './SettingsModal.css';
 
@@ -23,6 +23,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [tone, setTone] = useState<TranslationTone>(settings.tone);
   const [autoTts, setAutoTts] = useState(settings.autoTts);
   const [ttsVoiceRate, setTtsVoiceRate] = useState(settings.ttsVoiceRate || 1.0);
+  const [fontFamily, setFontFamily] = useState<AppFontFamily>(settings.fontFamily || 'noto-sans');
   const [showKey, setShowKey] = useState(false);
 
   // API key connection testing state
@@ -69,6 +70,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       tone,
       autoTts,
       ttsVoiceRate,
+      fontFamily,
     });
     onClose();
   };
@@ -218,6 +220,76 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
+            {/* 4. Font Family Setting (Default: Noto Sans) */}
+            <div className="setting-section">
+              <label className="section-label">
+                <Type size={14} />
+                <span>글꼴 (폰트) 일괄 설정</span>
+              </label>
+              <p className="setting-sub-desc">
+                전체 화면과 플로팅 자막, 회의 스트림에 적용되는 기본 글꼴을 선택합니다. (기본: Noto Sans)
+              </p>
+              <div className="font-options-grid">
+                {[
+                  {
+                    id: 'noto-sans',
+                    name: 'Noto Sans (노토 산스)',
+                    tag: '기본 / 권장',
+                    desc: '구글 개발 5개국어 범용 고딕 서체로 화면 가독성이 가장 뛰어납니다.',
+                    fontFamily: 'var(--font-family-noto)',
+                  },
+                  {
+                    id: 'pretendard',
+                    name: 'Pretendard (프리텐다드)',
+                    tag: '모던 UI',
+                    desc: 'Apple 산돌고딕 스타일의 깔끔하고 현대적인 시스템 UI 서체.',
+                    fontFamily: 'var(--font-family-pretendard)',
+                  },
+                  {
+                    id: 'nanum-gothic',
+                    name: '나눔고딕 (Nanum Gothic)',
+                    tag: '네이버',
+                    desc: '친근하고 또렷한 획 굵기의 한글 표준 고딕 서체.',
+                    fontFamily: 'var(--font-family-nanum)',
+                  },
+                  {
+                    id: 'system',
+                    name: '시스템 기본 글꼴 (System)',
+                    tag: 'OS 표준',
+                    desc: '운영체제(Windows Segoe UI, macOS San Francisco) 기본 글꼴.',
+                    fontFamily: 'var(--font-family-system)',
+                  },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`font-card ${fontFamily === item.id ? 'active' : ''}`}
+                    onClick={() => {
+                      setFontFamily(item.id as AppFontFamily);
+                      let cssVar = 'var(--font-family-noto)';
+                      if (item.id === 'pretendard') cssVar = 'var(--font-family-pretendard)';
+                      else if (item.id === 'nanum-gothic') cssVar = 'var(--font-family-nanum)';
+                      else if (item.id === 'system') cssVar = 'var(--font-family-system)';
+                      document.documentElement.style.setProperty('--font-family', cssVar);
+                    }}
+                  >
+                    <div className="font-card-header">
+                      <span className="font-name" style={{ fontFamily: item.fontFamily }}>
+                        {item.name}
+                      </span>
+                      <span className={`font-tag ${item.id === 'noto-sans' ? 'recommend' : ''}`}>
+                        {item.tag}
+                      </span>
+                    </div>
+                    <p className="font-desc">{item.desc}</p>
+                    <div className="font-sample-preview" style={{ fontFamily: item.fontFamily }}>
+                      가나다라 ABC 123 LiveLingua KR 실시간 회의 번역
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* 4. Audio & Push-to-Talk Settings */}
             <div className="setting-section">
               <label className="section-label">
@@ -358,7 +430,43 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            {/* 6. Slack Webhook Integration */}
+            {/* 6. Google Meet (Google Chat) Webhook Integration */}
+            <div className="setting-section">
+              <label className="section-label">
+                <span>Google Meet (Google Chat) 회의록 자동 전송 연동</span>
+              </label>
+              <p className="setting-sub-desc">
+                Google Chat 스페이스의 웹훅 URL을 등록하면, Google Meet 회의 종료 시 AI 3줄 요약과 To-do 목록이 해당 구글 챗 대화방으로 즉시 전송됩니다.
+              </p>
+              <input
+                type="text"
+                placeholder="https://chat.googleapis.com/v1/spaces/.../messages?key=...&token=..."
+                value={settings.googleMeetWebhookUrl || ''}
+                onChange={(e) => onSave({ ...settings, googleMeetWebhookUrl: e.target.value.trim() })}
+                className="glossary-input"
+                style={{ width: '100%', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            {/* 7. Zoom Team Chat Webhook Integration */}
+            <div className="setting-section">
+              <label className="section-label">
+                <span>Zoom Team Chat 회의록 자동 전송 연동</span>
+              </label>
+              <p className="setting-sub-desc">
+                Zoom Team Chat 채널의 Incoming Webhook URL을 등록하면, Zoom 회의 종료 시 요약 보고서와 To-do 목록이 줌 대화방으로 즉시 전송됩니다.
+              </p>
+              <input
+                type="text"
+                placeholder="https://integrations.zoom.us/chat/webhooks/incomingwebhook/..."
+                value={settings.zoomWebhookUrl || ''}
+                onChange={(e) => onSave({ ...settings, zoomWebhookUrl: e.target.value.trim() })}
+                className="glossary-input"
+                style={{ width: '100%', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            {/* 8. Slack Webhook Integration */}
             <div className="setting-section">
               <label className="section-label">
                 <span>슬랙(Slack) 회의록 자동 전송 연동</span>
@@ -376,7 +484,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               />
             </div>
 
-            {/* 7. Microsoft Teams Webhook Integration */}
+            {/* 9. Microsoft Teams Webhook Integration */}
             <div className="setting-section">
               <label className="section-label">
                 <span>Microsoft Teams(팀즈) 회의록 자동 전송 연동</span>
@@ -392,6 +500,49 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="glossary-input"
                 style={{ width: '100%', boxSizing: 'border-box' }}
               />
+            </div>
+
+            {/* 10. Frequently Used Meeting Room URLs (Google Meet & Zoom) */}
+            <div className="setting-section meeting-urls-section">
+              <label className="section-label">
+                <Video size={14} />
+                <span>자주 사용하는 화상 회의 주소 (Google Meet · Zoom)</span>
+              </label>
+              <p className="setting-sub-desc">
+                자주 참석하거나 주최하는 고정 회의실 링크를 등록해 두시면, 상단 [회의 연동] 허브 및 HUD/스트림의 [Meet], [Zoom] 버튼 클릭 시 해당 주소로 즉시 입장합니다.
+              </p>
+
+              <div className="meeting-url-fields-group">
+                <div className="meeting-url-field">
+                  <div className="url-field-header">
+                    <span className="url-brand-tag meet">Google Meet 회의 주소</span>
+                    {settings.googleMeetUrl && <span className="url-set-badge">등록됨 ✓</span>}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="https://meet.google.com/abc-defg-hij"
+                    value={settings.googleMeetUrl || ''}
+                    onChange={(e) => onSave({ ...settings, googleMeetUrl: e.target.value.trim() })}
+                    className="glossary-input"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div className="meeting-url-field">
+                  <div className="url-field-header">
+                    <span className="url-brand-tag zoom">Zoom 회의 주소 / 초대 링크</span>
+                    {settings.zoomUrl && <span className="url-set-badge">등록됨 ✓</span>}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="https://zoom.us/j/1234567890?pwd=... 또는 zoom.us 초대 링크"
+                    value={settings.zoomUrl || ''}
+                    onChange={(e) => onSave({ ...settings, zoomUrl: e.target.value.trim() })}
+                    className="glossary-input"
+                    style={{ width: '100%', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

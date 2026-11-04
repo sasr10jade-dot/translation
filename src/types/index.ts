@@ -7,6 +7,7 @@ export type TargetLang = 'ko' | 'en' | 'ja' | 'zh' | 'fr';
 export type ViewMode = 'normal' | 'wide' | 'hud' | 'stream';
 export type AppTheme = 'dark' | 'light';
 export type SpeakerRole = 'me' | 'partner';
+export type AppFontFamily = 'noto-sans' | 'pretendard' | 'nanum-gothic' | 'system';
 
 export type SpeechLangCode = 'ko-KR' | 'en-US' | 'ja-JP' | 'zh-CN' | 'fr-FR';
 
@@ -73,10 +74,15 @@ export interface AppSettings {
   debounceMs: number;
   defaultViewMode: ViewMode;
   fontScale: number;
+  fontFamily: AppFontFamily; // 기본 글꼴 (noto-sans, pretendard, nanum-gothic, system)
   pushToTalk: boolean;
   glossary: GlossaryItem[];
+  googleMeetWebhookUrl: string; // Google Meet (Google Chat) 회의록 전송 웹훅 URL
+  zoomWebhookUrl: string; // Zoom Team Chat 회의록 전송 웹훅 URL
   slackWebhookUrl: string; // 슬랙 채널 실시간 회의록 전송 웹훅 URL
   teamsWebhookUrl: string; // Microsoft Teams 채널 회의록 전송 웹훅 URL
+  googleMeetUrl: string; // 자주 사용하는 Google Meet 회의실 주소 (URL)
+  zoomUrl: string; // 자주 사용하는 Zoom 회의실 주소 (URL / PMI)
 }
 
 export interface AudioVisualizerState {

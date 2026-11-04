@@ -7,7 +7,6 @@ import {
   History,
   Sparkles,
   Tv,
-  Headphones,
   Maximize,
   Minimize,
   Download,
@@ -19,6 +18,7 @@ import {
   BookOpen,
   Sun,
   Moon,
+  Video,
 } from 'lucide-react';
 import { AppSettings, AppTheme, SupportedLang, TargetLang, ViewMode } from '../../types';
 import './Header.css';
@@ -233,14 +233,15 @@ export const Header: React.FC<HeaderProps> = ({
             {isFullscreen ? <Minimize size={15} /> : <Maximize size={15} />}
           </button>
 
-          {/* Audio Guide Button (PC only) */}
+          {/* Meeting Integration Hub (Google Meet · Zoom · Teams) */}
           <button
             type="button"
-            className="header-btn guide-btn"
+            className="header-btn meeting-hub-btn"
             onClick={onOpenAudioGuide}
-            title="화상 회의 상대방 목소리 캡처(스테레오 믹스) 가이드"
+            title="Google Meet · Zoom 화상 회의 원클릭 연동 및 오디오 캡처 허브"
           >
-            <Headphones size={15} />
+            <Video size={15} />
+            <span className="btn-label">회의 연동</span>
           </button>
 
           {/* Engine status badge (PC only) */}

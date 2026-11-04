@@ -6,12 +6,17 @@
 
 ## ✨ 핵심 기능
 
-1. **화상 회의 전용 플로팅 자막 HUD (Meeting Subtitle HUD)**
-   - Zoom이나 Google Meet 화면을 가리지 않도록 화면 하단에 반투명 자막 바 형태로 띄울 수 있습니다.
+1. **화상 회의 전용 플로팅 자막 HUD (Meeting Subtitle HUD) & PIP 자막**
+   - Zoom, Google Meet 화면을 가리지 않도록 화면 하단에 반투명 자막 바 또는 브라우저 밖으로 띄우는 Chrome PIP 플로팅 자막을 제공합니다.
    - 배경 투명도(40%~98%) 조절, 글자 크기(작게/보통/크게) 조절, 직전 대화 롤링 표시 기능 탑재.
 
-2. **화상 회의 상대방 음성 캡처 가이드**
-   - 상단 **[회의 오디오 연결법]** 버튼을 통해 Zoom/Teams에서 나오는 상대방 스피커 소리를 번역기에 입력시키는 **Windows 스테레오 믹스(Stereo Mix)** 설정 가이드를 제공합니다.
+2. **Google Meet & Zoom 화상 회의 연동 허브 & 오디오 캡처**
+   - 상단 **[회의 연동 🎥]** 버튼을 통해 Google Meet(`meet.google.com`) 및 Zoom(`zoom.us`) 바로가기 및 원클릭 회의 시작을 지원합니다.
+   - **브라우저 탭 오디오 실시간 캡처**: 별도 프로그램 설치 없이 Chrome 화면/탭 공유의 [오디오 공유] 기능을 활용하여 Google Meet / Zoom 탭의 소리를 실시간으로 캡처 및 모니터링합니다.
+   - **Windows 스테레오 믹스 & Mac BlackHole 가이드** 제공.
+
+3. **Google Meet · Zoom · Teams · Slack 4대 협업 도구 회의록 자동 전송**
+   - 회의 종료 후 [AI 회의록 3줄 요약]에서 핵심 안건 3줄 요약과 To-do(Action Items)를 Google Meet(Google Chat 스페이스), Zoom Team Chat, Microsoft Teams, Slack 채널로 웹훅을 통해 원클릭 자동 전송합니다.
 
 3. **실시간 음성 인식 (STT)**
    - 마이크 버튼을 켜면 영어 발화를 실시간으로 캡처하여 중간 단어(Interim)와 확정 문장(Final)을 즉각 텍스트로 변환합니다.
@@ -28,6 +33,10 @@
 
 6. **한국어 음성 읽기 (TTS) & 히스토리 내보내기**
    - 번역된 한국어 문장을 Web SpeechSynthesis로 들을 수 있으며, 모든 회의 번역 기록을 **TXT / JSON 파일로 다운로드**하여 회의록으로 활용할 수 있습니다.
+
+7. **Noto Sans 일괄 기본 적용 & 환경설정 글꼴 변경**
+   - 구글 개발 5개국어 범용 고딕인 **Noto Sans**를 전체 화면, 자막 HUD, PIP에 일괄 적용하여 장시간 회의 시 눈의 피로를 낮추고 가독성을 극대화했습니다.
+   - [환경설정 ⚙️]에서 **Noto Sans(기본/권장)**, **Pretendard(프리텐다드)**, **나눔고딕**, **시스템 기본 글꼴** 중 자유롭게 일괄 전환할 수 있습니다.
 
 ---
 

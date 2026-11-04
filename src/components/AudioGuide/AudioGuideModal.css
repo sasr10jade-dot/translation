@@ -1,11 +1,463 @@
 .audio-guide-dialog {
-  max-width: 620px;
+  max-width: 680px;
+  width: 95%;
 }
 
-.guide-intro {
-  font-size: 0.9rem;
+.modal-title-group .accent {
+  color: #06b6d4;
+}
+
+.hub-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: rgba(6, 182, 212, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  margin-left: 0.5rem;
+}
+
+/* Tab Switcher */
+.hub-tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem 0.5rem 1.5rem;
+  border-bottom: 1px solid var(--panel-border);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.hub-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  line-height: 1.6;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hub-tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hub-tab-btn.active {
+  color: #ffffff;
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.hub-modal-body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Quick Connect Container */
+.quick-connect-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.meeting-platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.85rem;
+}
+
+.platform-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.platform-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.platform-card.meet-card {
+  border-left: 3px solid #0f9d58;
+}
+
+.platform-card.zoom-card {
+  border-left: 3px solid #2d8cff;
+}
+
+.platform-card.teams-card {
+  border-left: 3px solid #6264a7;
+}
+
+.platform-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.platform-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.platform-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platform-icon.meet-icon {
+  background: rgba(15, 157, 88, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(15, 157, 88, 0.3);
+}
+
+.platform-icon.zoom-icon {
+  background: rgba(45, 140, 255, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(45, 140, 255, 0.3);
+}
+
+.platform-icon.teams-icon {
+  background: rgba(98, 100, 167, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(98, 100, 167, 0.3);
+}
+
+.platform-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.platform-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.platform-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.platform-tag.meet-tag {
+  background: rgba(15, 157, 88, 0.15);
+  color: #6ee7b7;
+}
+
+.platform-tag.zoom-tag {
+  background: rgba(45, 140, 255, 0.15);
+  color: #93c5fd;
+}
+
+.platform-tag.teams-tag {
+  background: rgba(98, 100, 167, 0.15);
+  color: #c7d2fe;
+}
+
+.platform-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.platform-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.platform-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.8rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.platform-btn.meet-btn {
+  background: #0f9d58;
+  color: #ffffff;
+}
+.platform-btn.meet-btn:hover {
+  background: #0b8043;
+}
+
+.platform-btn.zoom-btn {
+  background: #2d8cff;
+  color: #ffffff;
+}
+.platform-btn.zoom-btn:hover {
+  background: #1a73e8;
+}
+
+.platform-btn.teams-btn {
+  background: #6264a7;
+  color: #ffffff;
+}
+.platform-btn.teams-btn:hover {
+  background: #50528e;
+}
+
+.platform-btn.outline {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--panel-border);
+  color: var(--text-primary);
+}
+.platform-btn.outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* Tab Audio Capture Box */
+.tab-audio-capture-box {
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.capture-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.capture-title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.capture-icon {
+  color: #06b6d4;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.capture-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.capture-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 0.15rem 0 0 0;
+}
+
+.capture-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.capture-action-btn.start {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+}
+.capture-action-btn.start:hover {
+  opacity: 0.95;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+.capture-action-btn.stop {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+.capture-action-btn.stop:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.capture-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.capture-active-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6ee7b7;
+}
+
+.status-ping {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.volume-meter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vol-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.vol-bar-bg {
+  width: 100px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.vol-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+  border-radius: 4px;
+  transition: width 0.1s ease;
+}
+
+.vol-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #38bdf8;
+  width: 32px;
+  text-align: right;
+}
+
+.capture-guide-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+}
+
+.note-icon {
+  color: #fbbf24;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Quick Controls Bar */
+.quick-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1.15rem;
+}
+
+.quick-ctrl-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c7d2fe;
+}
+
+.quick-ctrl-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.quick-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--panel-border);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.quick-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.quick-pill-btn.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+}
+
+.quick-pill-btn.mic.active {
+  background: #ef4444;
+  border-color: #ef4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Guide Tab styles */
+.guide-content-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .guide-card {
@@ -38,6 +490,10 @@
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-cyan) 100%);
   color: #fff;
+}
+
+.method-badge.meet-badge {
+  background: linear-gradient(135deg, #0f9d58 0%, #2d8cff 100%);
 }
 
 .method-badge.neutral {
@@ -97,7 +553,81 @@
 }
 
 .tip-text {
-  font-size: 0.8rem;
-  color: #fde68a;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
   line-height: 1.5;
+  margin: 0;
+}
+
+.hub-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-status-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.hub-settings-link {
+  margin-left: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--accent-cyan);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.hub-settings-link:hover {
+  color: #ffffff;
+}
+
+.platform-tag.custom {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+/* Light Theme Overrides */
+[data-theme='light'] .hub-tab-bar {
+  background: #f1f5f9;
+}
+
+[data-theme='light'] .platform-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+[data-theme='light'] .platform-title {
+  color: #090d16;
+}
+
+[data-theme='light'] .platform-btn.outline {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme='light'] .tab-audio-capture-box {
+  background: #f0fdfa;
+  border-color: #99f6e4;
+}
+
+[data-theme='light'] .capture-title {
+  color: #0f172a;
+}
+
+[data-theme='light'] .guide-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+[data-theme='light'] .guide-card-title {
+  color: #090d16;
 }

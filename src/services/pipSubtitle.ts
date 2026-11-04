@@ -6,6 +6,7 @@ export class PipSubtitleService {
   private isPipActive = false;
   private currentEnText = '';
   private currentKoText = '';
+  private fontFamily = '"Noto Sans KR", "Noto Sans", sans-serif';
 
   private constructor() {
     this.canvas = document.createElement('canvas');
@@ -46,6 +47,11 @@ export class PipSubtitleService {
     this.renderCanvas();
   }
 
+  public setFont(fontFamily: string) {
+    this.fontFamily = fontFamily;
+    this.renderCanvas();
+  }
+
   private renderCanvas() {
     const ctx = this.ctx;
     const w = this.canvas.width;
@@ -64,12 +70,12 @@ export class PipSubtitleService {
 
     // 2. English Source Line
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '500 18px "Noto Sans KR", sans-serif';
+    ctx.font = `500 18px ${this.fontFamily}`;
     ctx.fillText('EN: ' + (this.currentEnText ? this.truncate(this.currentEnText, 55) : 'Listening to speech...'), 24, 48);
 
     // 3. Korean Translation Line (Large & Bold)
     ctx.fillStyle = '#ffffff';
-    ctx.font = '700 28px "Noto Sans KR", sans-serif';
+    ctx.font = `700 28px ${this.fontFamily}`;
     ctx.fillText(this.currentKoText ? this.truncate(this.currentKoText, 40) : '실시간 번역 자막 대기 중...', 24, 110);
 
     // Status pill

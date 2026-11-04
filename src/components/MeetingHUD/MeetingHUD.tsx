@@ -15,6 +15,8 @@ interface MeetingHUDProps {
   onToggleMic: () => void;
   onExitHUD: () => void;
   onSpeak: (text: string) => void;
+  googleMeetUrl?: string;
+  zoomUrl?: string;
 }
 
 export const MeetingHUD: React.FC<MeetingHUDProps> = ({
@@ -29,6 +31,8 @@ export const MeetingHUD: React.FC<MeetingHUDProps> = ({
   onToggleMic,
   onExitHUD,
   onSpeak,
+  googleMeetUrl,
+  zoomUrl,
 }) => {
   const [opacity, setOpacity] = useState(90);
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg'>('md');
@@ -64,6 +68,26 @@ export const MeetingHUD: React.FC<MeetingHUDProps> = ({
               '기본 번역'
             )}
           </span>
+
+          {/* Quick Video Meeting Links */}
+          <div className="hud-meeting-links">
+            <button
+              type="button"
+              className="hud-link-chip meet"
+              onClick={() => window.open(googleMeetUrl || 'https://meet.google.com', '_blank')}
+              title={googleMeetUrl ? `Google Meet 내 회의실 (${googleMeetUrl}) 열기` : 'Google Meet 열기'}
+            >
+              Meet
+            </button>
+            <button
+              type="button"
+              className="hud-link-chip zoom"
+              onClick={() => window.open(zoomUrl || 'https://zoom.us/join', '_blank')}
+              title={zoomUrl ? `Zoom 내 회의실 (${zoomUrl}) 열기` : 'Zoom 회의 열기'}
+            >
+              Zoom
+            </button>
+          </div>
         </div>
 
         {/* HUD Quick Settings */}

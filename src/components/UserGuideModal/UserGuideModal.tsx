@@ -79,7 +79,7 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
             onClick={() => setActiveTab('intelligence')}
           >
             <Sparkles size={14} />
-            <span>AI 회의록 & Teams/Slack</span>
+            <span>AI 회의록 & 협업 도구 연동</span>
           </button>
         </div>
 
@@ -134,12 +134,12 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                     <Headphones size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">Teams 및 Zoom 회의 상대방 소리 캡처 팁</h4>
+                    <h4 className="guide-feature-title">Google Meet & Zoom 회의 상대방 소리 캡처 팁</h4>
                     <p className="guide-feature-sub">상대방 스피커 소리를 번역기에 직결하는 법</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  Windows 작업표시줄 스피커 우클릭 ➔ <strong>[소리 설정]</strong> ➔ 입력 장치에서 <strong>'스테레오 믹스 (Stereo Mix)'</strong>를 기본 마이크로 설정하시면, 상대방의 목소리가 번역기로 직결 수음됩니다.
+                  상단 <strong>[회의 연동 🎥]</strong> 버튼을 누르면 Google Meet 및 Zoom 바로가기와 함께 <strong>[브라우저 탭 오디오 실시간 캡처]</strong>를 제공합니다. 또한 Windows 작업표시줄 스피커 우클릭 ➔ <strong>[소리 설정]</strong> ➔ 입력 장치에서 <strong>'스테레오 믹스 (Stereo Mix)'</strong>를 기본 마이크로 설정하시면, 상대방의 목소리가 번역기로 직결 수음됩니다.
                 </p>
               </div>
             </div>
@@ -200,7 +200,7 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                     <div className="keys-wrap">
                       <span className="key-cap">헤더 [A-] [A+]</span>
                     </div>
-                    <span className="action-desc">글자 크기 80% ~ 150% 원클릭 실시간 확대/축소</span>
+                    <span className="action-desc">글자 크기 80% ~ 150% 원클릭 실시간 확대/축소 (설정에서 Noto Sans 등 글꼴 일괄 변경)</span>
                   </div>
                 </div>
               </div>
@@ -279,13 +279,13 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
                     <Send size={18} />
                   </div>
                   <div>
-                    <h4 className="guide-feature-title">Microsoft Teams & Slack 웹훅 원클릭 자동 전송</h4>
+                    <h4 className="guide-feature-title">Google Meet · Zoom · Teams · Slack 4대 협업 도구 웹훅 자동 전송</h4>
                     <p className="guide-feature-sub">회의 종료 후 1초 만에 팀 채널로 요약 보고서 발송</p>
                   </div>
                 </div>
                 <p className="guide-text">
-                  [설정 ⚙️]에서 Teams 또는 Slack 웹훅 URL을 등록해 두시면,
-                  스트림 화면 ➔ <strong>[AI 회의록 3줄 요약]</strong> 창에서 <strong>[Teams 전송 🚀]</strong> 또는 <strong>[슬랙 전송]</strong> 버튼 클릭 한 번으로 핵심 안건과 To-do 목록이 팀 대화방으로 즉시 공유됩니다.
+                  [설정 ⚙️]에서 Google Meet(Google Chat), Zoom Team Chat, Teams 또는 Slack 웹훅 URL을 등록해 두시면,
+                  스트림 화면 ➔ <strong>[AI 회의록 3줄 요약]</strong> 창에서 <strong>[Google Meet 전송]</strong>, <strong>[Zoom 전송]</strong>, <strong>[Teams 전송 🚀]</strong>, <strong>[슬랙 전송]</strong> 원클릭으로 핵심 안건과 To-do 목록이 팀 대화방으로 즉시 공유됩니다.
                 </p>
               </div>
 

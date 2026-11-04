@@ -129,7 +129,42 @@
 .footer-right-buttons {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.google-meet-send-btn {
+  background: rgba(15, 157, 88, 0.18);
+  border-color: rgba(15, 157, 88, 0.5);
+  color: #6ee7b7;
+}
+
+.google-meet-send-btn:hover:not(:disabled) {
+  background: #0f9d58;
+  color: #ffffff;
+}
+
+.google-meet-send-btn.success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: #6ee7b7;
+}
+
+.zoom-send-btn {
+  background: rgba(45, 140, 255, 0.18);
+  border-color: rgba(45, 140, 255, 0.5);
+  color: #93c5fd;
+}
+
+.zoom-send-btn:hover:not(:disabled) {
+  background: #2d8cff;
+  color: #ffffff;
+}
+
+.zoom-send-btn.success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: #6ee7b7;
 }
 
 .teams-send-btn {
