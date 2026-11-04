@@ -1,8 +1,8 @@
 git add .
-git commit -m "feat: complete Microsoft Teams integration with Office 365 Connector webhook and specialized Teams audio capture guide"
+git commit -m "style: overhaul layout tone and manner with unified obsidian dark, crisp snow light, and executive minimal toolbar"
 
 $token = (gh auth token).Trim()
 git remote set-url origin "https://sasr10jade-dot:$token@github.com/sasr10jade-dot/translation.git"
 git push origin main
 git remote set-url origin "https://github.com/sasr10jade-dot/translation.git"
-Write-Host "GitHub Teams 연동 푸시 완료!"
+Write-Host "GitHub 톤앤매너 리파인 푸시 완료!"
