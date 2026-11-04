@@ -2,6 +2,7 @@ export class AudioVisualizerService {
   private audioContext: AudioContext | null = null;
   private analyser: AnalyserNode | null = null;
   private mediaStream: MediaStream | null = null;
+  private isExternalStream = false;
   private sourceNode: MediaStreamAudioSourceNode | null = null;
   private animationFrameId: number | null = null;
   private canvas: HTMLCanvasElement | null = null;
@@ -35,6 +36,9 @@ export class AudioVisualizerService {
         return false;
       }
 
+      this.stop();
+      this.isExternalStream = false;
+
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -45,6 +49,10 @@ export class AudioVisualizerService {
 
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       this.audioContext = new AudioCtx();
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+
       this.analyser = this.audioContext.createAnalyser();
       this.analyser.fftSize = 256;
       this.analyser.smoothingTimeConstant = 0.8;
@@ -64,10 +72,15 @@ export class AudioVisualizerService {
   public async startWithStream(stream: MediaStream): Promise<boolean> {
     try {
       this.stop();
+      this.isExternalStream = true;
       this.mediaStream = stream;
 
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       this.audioContext = new AudioCtx();
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+
       this.analyser = this.audioContext.createAnalyser();
       this.analyser.fftSize = 256;
       this.analyser.smoothingTimeConstant = 0.8;
@@ -101,10 +114,13 @@ export class AudioVisualizerService {
 
     if (this.mediaStream) {
       try {
-        this.mediaStream.getTracks().forEach((track) => track.stop());
+        if (!this.isExternalStream) {
+          this.mediaStream.getTracks().forEach((track) => track.stop());
+        }
       } catch {}
       this.mediaStream = null;
     }
+    this.isExternalStream = false;
 
     if (this.audioContext && this.audioContext.state !== 'closed') {
       try {

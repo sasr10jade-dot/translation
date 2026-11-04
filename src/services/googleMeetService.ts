@@ -12,6 +12,9 @@ export const GoogleMeetService = {
         'Google Meet(Google Chat) 웹훅 URL이 설정되지 않았습니다. [설정]에서 Webhook URL을 입력해 주세요.'
       );
     }
+    if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
+      throw new Error('올바른 웹훅 URL(https://...)을 입력해 주세요.');
+    }
 
     const timeStr = new Date(summary.createdAt).toLocaleString('ko-KR');
     const keyPointsText = summary.keyPoints.map((p, i) => `${i + 1}. ${p}`).join('\n');

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Sparkles, Key, Check, AlertCircle, Eye, EyeOff, Save, Volume2, Sliders, Type, Video } from 'lucide-react';
-import { AppSettings, TranslationEngine, TranslationTone, AppFontFamily } from '../../types';
+import { AppSettings, TranslationEngine, TranslationTone, AppFontFamily, GlossaryItem } from '../../types';
 import { GeminiTranslatorService } from '../../services/translation/geminiTranslator';
 import './SettingsModal.css';
 
@@ -17,18 +17,48 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
   onSave,
 }) => {
+  // Local form state for atomic saves
   const [engine, setEngine] = useState<TranslationEngine>(settings.engine);
-  const [apiKey, setApiKey] = useState(settings.geminiApiKey);
+  const [apiKey, setApiKey] = useState(settings.geminiApiKey || '');
   const [model, setModel] = useState(settings.geminiModel || 'gemini-1.5-flash');
-  const [tone, setTone] = useState<TranslationTone>(settings.tone);
-  const [autoTts, setAutoTts] = useState(settings.autoTts);
+  const [tone, setTone] = useState<TranslationTone>(settings.tone || 'natural');
+  const [autoTts, setAutoTts] = useState(settings.autoTts || false);
   const [ttsVoiceRate, setTtsVoiceRate] = useState(settings.ttsVoiceRate || 1.0);
   const [fontFamily, setFontFamily] = useState<AppFontFamily>(settings.fontFamily || 'noto-sans');
-  const [showKey, setShowKey] = useState(false);
+  const [pushToTalk, setPushToTalk] = useState(settings.pushToTalk || false);
+  const [glossary, setGlossary] = useState<GlossaryItem[]>(settings.glossary || []);
+  const [googleMeetWebhookUrl, setGoogleMeetWebhookUrl] = useState(settings.googleMeetWebhookUrl || '');
+  const [zoomWebhookUrl, setZoomWebhookUrl] = useState(settings.zoomWebhookUrl || '');
+  const [slackWebhookUrl, setSlackWebhookUrl] = useState(settings.slackWebhookUrl || '');
+  const [teamsWebhookUrl, setTeamsWebhookUrl] = useState(settings.teamsWebhookUrl || '');
+  const [googleMeetUrl, setGoogleMeetUrl] = useState(settings.googleMeetUrl || '');
+  const [zoomUrl, setZoomUrl] = useState(settings.zoomUrl || '');
 
-  // API key connection testing state
+  const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  // Sync state whenever modal is opened
+  useEffect(() => {
+    if (isOpen) {
+      setEngine(settings.engine);
+      setApiKey(settings.geminiApiKey || '');
+      setModel(settings.geminiModel || 'gemini-1.5-flash');
+      setTone(settings.tone || 'natural');
+      setAutoTts(settings.autoTts || false);
+      setTtsVoiceRate(settings.ttsVoiceRate || 1.0);
+      setFontFamily(settings.fontFamily || 'noto-sans');
+      setPushToTalk(settings.pushToTalk || false);
+      setGlossary(settings.glossary || []);
+      setGoogleMeetWebhookUrl(settings.googleMeetWebhookUrl || '');
+      setZoomWebhookUrl(settings.zoomWebhookUrl || '');
+      setSlackWebhookUrl(settings.slackWebhookUrl || '');
+      setTeamsWebhookUrl(settings.teamsWebhookUrl || '');
+      setGoogleMeetUrl(settings.googleMeetUrl || '');
+      setZoomUrl(settings.zoomUrl || '');
+      setTestResult(null);
+    }
+  }, [isOpen, settings]);
 
   if (!isOpen) return null;
 
@@ -42,7 +72,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setTestResult(null);
 
     try {
-      const tester = new GeminiTranslatorService(apiKey, model);
+      const tester = new GeminiTranslatorService(apiKey.trim(), model);
       const res = await tester.translate('Hello world');
       if (res.translatedText) {
         setTestResult({
@@ -60,6 +90,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
+  const handleCancel = () => {
+    // Revert font preview to saved settings font
+    const savedFont = settings.fontFamily || 'noto-sans';
+    let cssVar = 'var(--font-family-noto)';
+    if (savedFont === 'pretendard') cssVar = 'var(--font-family-pretendard)';
+    else if (savedFont === 'nanum-gothic') cssVar = 'var(--font-family-nanum)';
+    else if (savedFont === 'system') cssVar = 'var(--font-family-system)';
+    document.documentElement.style.setProperty('--font-family', cssVar);
+
+    onClose();
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
@@ -71,12 +113,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       autoTts,
       ttsVoiceRate,
       fontFamily,
+      pushToTalk,
+      glossary,
+      googleMeetWebhookUrl: googleMeetWebhookUrl.trim(),
+      zoomWebhookUrl: zoomWebhookUrl.trim(),
+      slackWebhookUrl: slackWebhookUrl.trim(),
+      teamsWebhookUrl: teamsWebhookUrl.trim(),
+      googleMeetUrl: googleMeetUrl.trim(),
+      zoomUrl: zoomUrl.trim(),
     });
     onClose();
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-backdrop" onClick={handleCancel}>
       <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="modal-header">
@@ -84,7 +134,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <Sliders size={20} className="modal-icon" />
             <h3 className="modal-title">환경 설정</h3>
           </div>
-          <button type="button" className="modal-close-btn" onClick={onClose}>
+          <button type="button" className="modal-close-btn" onClick={handleCancel}>
             <X size={20} />
           </button>
         </div>
@@ -125,7 +175,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            {/* 2. Gemini Settings (Shown or highlighted) */}
+            {/* 2. Gemini Settings (Shown when gemini is active) */}
             {engine === 'gemini' && (
               <div className="setting-section gemini-settings-box">
                 <div className="gemini-box-header">
@@ -163,7 +213,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     type="button"
                     className="test-key-btn"
                     onClick={handleTestApiKey}
-                    disabled={testing || !apiKey}
+                    disabled={testing || !apiKey.trim()}
                   >
                     {testing ? '검증 중...' : '연결 테스트'}
                   </button>
@@ -290,7 +340,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            {/* 4. Audio & Push-to-Talk Settings */}
+            {/* 5. Audio & Push-to-Talk Settings */}
             <div className="setting-section">
               <label className="section-label">
                 <Volume2 size={14} />
@@ -308,8 +358,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <label className="switch-wrapper">
                   <input
                     type="checkbox"
-                    checked={settings.pushToTalk}
-                    onChange={(e) => onSave({ ...settings, pushToTalk: e.target.checked })}
+                    checked={pushToTalk}
+                    onChange={(e) => setPushToTalk(e.target.checked)}
                   />
                   <span className="switch-slider"></span>
                 </label>
@@ -347,7 +397,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            {/* 5. Custom Glossary (전문 용어 사전) */}
+            {/* 6. Custom Glossary (전문 용어 사전) */}
             <div className="setting-section">
               <label className="section-label">
                 <span>사내/업무 맞춤 전문 용어 사전 (Glossary)</span>
@@ -357,16 +407,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </p>
 
               <div className="glossary-items-list">
-                {(settings.glossary || []).map((item) => (
+                {glossary.map((item) => (
                   <div key={item.id} className="glossary-row">
                     <input
                       type="checkbox"
                       checked={item.enabled}
                       onChange={(e) => {
-                        const updated = settings.glossary.map((g) =>
-                          g.id === item.id ? { ...g, enabled: e.target.checked } : g
+                        setGlossary((prev) =>
+                          prev.map((g) => (g.id === item.id ? { ...g, enabled: e.target.checked } : g))
                         );
-                        onSave({ ...settings, glossary: updated });
                       }}
                       className="glossary-checkbox"
                       title="적용 여부"
@@ -378,8 +427,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       type="button"
                       className="glossary-del-btn"
                       onClick={() => {
-                        const updated = settings.glossary.filter((g) => g.id !== item.id);
-                        onSave({ ...settings, glossary: updated });
+                        setGlossary((prev) => prev.filter((g) => g.id !== item.id));
                       }}
                       title="용어 삭제"
                     >
@@ -410,16 +458,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     const srcInput = document.getElementById('new-glossary-src') as HTMLInputElement;
                     const tgtInput = document.getElementById('new-glossary-tgt') as HTMLInputElement;
                     if (srcInput && tgtInput && srcInput.value.trim() && tgtInput.value.trim()) {
-                      const newItem = {
+                      const newItem: GlossaryItem = {
                         id: Date.now().toString(),
                         sourceWord: srcInput.value.trim(),
                         targetWord: tgtInput.value.trim(),
                         enabled: true,
                       };
-                      onSave({
-                        ...settings,
-                        glossary: [...(settings.glossary || []), newItem],
-                      });
+                      setGlossary((prev) => [...prev, newItem]);
                       srcInput.value = '';
                       tgtInput.value = '';
                     }
@@ -430,7 +475,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            {/* 6. Google Meet (Google Chat) Webhook Integration */}
+            {/* 7. Google Meet (Google Chat) Webhook Integration */}
             <div className="setting-section">
               <label className="section-label">
                 <span>Google Meet (Google Chat) 회의록 자동 전송 연동</span>
@@ -441,14 +486,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <input
                 type="text"
                 placeholder="https://chat.googleapis.com/v1/spaces/.../messages?key=...&token=..."
-                value={settings.googleMeetWebhookUrl || ''}
-                onChange={(e) => onSave({ ...settings, googleMeetWebhookUrl: e.target.value.trim() })}
+                value={googleMeetWebhookUrl}
+                onChange={(e) => setGoogleMeetWebhookUrl(e.target.value)}
                 className="glossary-input"
                 style={{ width: '100%', boxSizing: 'border-box' }}
               />
             </div>
 
-            {/* 7. Zoom Team Chat Webhook Integration */}
+            {/* 8. Zoom Team Chat Webhook Integration */}
             <div className="setting-section">
               <label className="section-label">
                 <span>Zoom Team Chat 회의록 자동 전송 연동</span>
@@ -459,14 +504,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <input
                 type="text"
                 placeholder="https://integrations.zoom.us/chat/webhooks/incomingwebhook/..."
-                value={settings.zoomWebhookUrl || ''}
-                onChange={(e) => onSave({ ...settings, zoomWebhookUrl: e.target.value.trim() })}
+                value={zoomWebhookUrl}
+                onChange={(e) => setZoomWebhookUrl(e.target.value)}
                 className="glossary-input"
                 style={{ width: '100%', boxSizing: 'border-box' }}
               />
             </div>
 
-            {/* 8. Slack Webhook Integration */}
+            {/* 9. Slack Webhook Integration */}
             <div className="setting-section">
               <label className="section-label">
                 <span>슬랙(Slack) 회의록 자동 전송 연동</span>
@@ -477,14 +522,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <input
                 type="text"
                 placeholder="https://hooks.slack.com/services/T.../B.../..."
-                value={settings.slackWebhookUrl || ''}
-                onChange={(e) => onSave({ ...settings, slackWebhookUrl: e.target.value.trim() })}
+                value={slackWebhookUrl}
+                onChange={(e) => setSlackWebhookUrl(e.target.value)}
                 className="glossary-input"
                 style={{ width: '100%', boxSizing: 'border-box' }}
               />
             </div>
 
-            {/* 9. Microsoft Teams Webhook Integration */}
+            {/* 10. Microsoft Teams Webhook Integration */}
             <div className="setting-section">
               <label className="section-label">
                 <span>Microsoft Teams(팀즈) 회의록 자동 전송 연동</span>
@@ -495,14 +540,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <input
                 type="text"
                 placeholder="https://...webhook.office.com/webhookb2/..."
-                value={settings.teamsWebhookUrl || ''}
-                onChange={(e) => onSave({ ...settings, teamsWebhookUrl: e.target.value.trim() })}
+                value={teamsWebhookUrl}
+                onChange={(e) => setTeamsWebhookUrl(e.target.value)}
                 className="glossary-input"
                 style={{ width: '100%', boxSizing: 'border-box' }}
               />
             </div>
 
-            {/* 10. Frequently Used Meeting Room URLs (Google Meet & Zoom) */}
+            {/* 11. Frequently Used Meeting Room URLs (Google Meet & Zoom) */}
             <div className="setting-section meeting-urls-section">
               <label className="section-label">
                 <Video size={14} />
@@ -516,13 +561,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="meeting-url-field">
                   <div className="url-field-header">
                     <span className="url-brand-tag meet">Google Meet 회의 주소</span>
-                    {settings.googleMeetUrl && <span className="url-set-badge">등록됨 ✓</span>}
+                    {googleMeetUrl.trim() && <span className="url-set-badge">등록됨 ✓</span>}
                   </div>
                   <input
                     type="text"
                     placeholder="https://meet.google.com/abc-defg-hij"
-                    value={settings.googleMeetUrl || ''}
-                    onChange={(e) => onSave({ ...settings, googleMeetUrl: e.target.value.trim() })}
+                    value={googleMeetUrl}
+                    onChange={(e) => setGoogleMeetUrl(e.target.value)}
                     className="glossary-input"
                     style={{ width: '100%', boxSizing: 'border-box' }}
                   />
@@ -531,13 +576,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="meeting-url-field">
                   <div className="url-field-header">
                     <span className="url-brand-tag zoom">Zoom 회의 주소 / 초대 링크</span>
-                    {settings.zoomUrl && <span className="url-set-badge">등록됨 ✓</span>}
+                    {zoomUrl.trim() && <span className="url-set-badge">등록됨 ✓</span>}
                   </div>
                   <input
                     type="text"
                     placeholder="https://zoom.us/j/1234567890?pwd=... 또는 zoom.us 초대 링크"
-                    value={settings.zoomUrl || ''}
-                    onChange={(e) => onSave({ ...settings, zoomUrl: e.target.value.trim() })}
+                    value={zoomUrl}
+                    onChange={(e) => setZoomUrl(e.target.value)}
                     className="glossary-input"
                     style={{ width: '100%', boxSizing: 'border-box' }}
                   />
@@ -548,7 +593,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* Modal Footer */}
           <div className="modal-footer">
-            <button type="button" className="modal-btn secondary" onClick={onClose}>
+            <button type="button" className="modal-btn secondary" onClick={handleCancel}>
               취소
             </button>
             <button type="submit" className="modal-btn primary">

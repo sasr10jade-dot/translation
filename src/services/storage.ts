@@ -36,7 +36,10 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(SETTINGS_KEY);
       if (data) {
-        return { ...DEFAULT_SETTINGS, ...JSON.parse(data) };
+        const parsed = JSON.parse(data);
+        if (parsed && typeof parsed === 'object') {
+          return { ...DEFAULT_SETTINGS, ...parsed };
+        }
       }
     } catch {
       // 파싱 실패 시 기본값 반환
@@ -56,7 +59,10 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(HISTORY_KEY);
       if (data) {
-        return JSON.parse(data);
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
       }
     } catch {
       //

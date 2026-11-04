@@ -7,11 +7,12 @@ export class PipSubtitleService {
   private currentEnText = '';
   private currentKoText = '';
   private fontFamily = '"Noto Sans KR", "Noto Sans", sans-serif';
+  public onPipChange?: (active: boolean) => void;
 
   private constructor() {
     this.canvas = document.createElement('canvas');
     this.canvas.width = 640;
-    this.canvas.height = 180;
+    this.canvas.height = 140;
     this.ctx = this.canvas.getContext('2d')!;
 
     this.video = document.createElement('video');
@@ -21,6 +22,7 @@ export class PipSubtitleService {
     // PIP 창 닫힘 감지
     this.video.addEventListener('leavepictureinpicture', () => {
       this.isPipActive = false;
+      this.onPipChange?.(false);
     });
 
     this.renderCanvas();
@@ -99,6 +101,7 @@ export class PipSubtitleService {
       if (document.pictureInPictureElement) {
         await document.exitPictureInPicture();
         this.isPipActive = false;
+        this.onPipChange?.(false);
         return false;
       }
 
@@ -108,9 +111,11 @@ export class PipSubtitleService {
       await this.video.play();
       await this.video.requestPictureInPicture();
       this.isPipActive = true;
+      this.onPipChange?.(true);
       return true;
     } catch {
       this.isPipActive = false;
+      this.onPipChange?.(false);
       return false;
     }
   }

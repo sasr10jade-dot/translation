@@ -101,6 +101,14 @@ export function App() {
     );
   }, [sourceText, interimText, translatedText]);
 
+  // Synchronize PIP state when closed by browser/OS
+  useEffect(() => {
+    const pip = PipSubtitleService.getInstance();
+    pip.onPipChange = (active) => {
+      setIsPipActive(active);
+    };
+  }, []);
+
   // Theme effect & handler
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
