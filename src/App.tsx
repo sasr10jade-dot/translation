@@ -7,6 +7,7 @@ import { MeetingHUD } from './components/MeetingHUD/MeetingHUD';
 import { MeetingStream } from './components/MeetingStream/MeetingStream';
 import { MeetingSummaryModal } from './components/MeetingSummaryModal/MeetingSummaryModal';
 import { AudioGuideModal } from './components/AudioGuide/AudioGuideModal';
+import { UserGuideModal } from './components/UserGuideModal/UserGuideModal';
 import { PWAInstallModal } from './components/PWAInstallModal/PWAInstallModal';
 import { MobileBottomBar } from './components/MobileBottomBar/MobileBottomBar';
 import { SpeechRecognitionService } from './services/speechRecognition';
@@ -59,6 +60,7 @@ export function App() {
   const [showAudioGuide, setShowAudioGuide] = useState(false);
   const [showPWAModal, setShowPWAModal] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [showUserGuide, setShowUserGuide] = useState(false);
   const [isPipActive, setIsPipActive] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -546,6 +548,7 @@ export function App() {
         onToggleHistory={() => setShowHistory(!showHistory)}
         onOpenSettings={() => setShowSettings(true)}
         onOpenAudioGuide={() => setShowAudioGuide(true)}
+        onOpenUserGuide={() => setShowUserGuide(true)}
       />
 
       {/* Main Workspace (displayed in normal & wide modes) */}
@@ -666,6 +669,13 @@ export function App() {
         records={records}
         settings={settings}
         onClose={() => setShowSummaryModal(false)}
+      />
+
+      {/* Comprehensive User Guide Modal */}
+      <UserGuideModal
+        isOpen={showUserGuide}
+        onClose={() => setShowUserGuide(false)}
+        onOpenSettings={() => setShowSettings(true)}
       />
 
       {/* Mobile Bottom Floating Action Bar */}

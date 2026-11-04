@@ -253,6 +253,17 @@
   color: #fff;
 }
 
+.header-btn.guide-manual-btn {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: #c084fc;
+}
+
+.header-btn.guide-manual-btn:hover {
+  background: rgba(168, 85, 247, 0.22);
+  color: #fff;
+}
+
 .header-btn.theme-toggle-btn {
   background: rgba(255, 255, 255, 0.08);
   color: #fbbf24;

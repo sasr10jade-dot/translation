@@ -16,6 +16,7 @@ import {
   Columns2,
   MessagesSquare,
   PictureInPicture2,
+  BookOpen,
   Sun,
   Moon,
 } from 'lucide-react';
@@ -42,6 +43,7 @@ interface HeaderProps {
   onToggleHistory: () => void;
   onOpenSettings: () => void;
   onOpenAudioGuide: () => void;
+  onOpenUserGuide: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -64,6 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleHistory,
   onOpenSettings,
   onOpenAudioGuide,
+  onOpenUserGuide,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -281,6 +284,17 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <History size={16} />
           {historyCount > 0 && <span className="counter-badge">{historyCount}</span>}
+        </button>
+
+        {/* User Guide Manual button */}
+        <button
+          type="button"
+          className="header-btn guide-manual-btn"
+          onClick={onOpenUserGuide}
+          title="LiveLingua 종합 사용자 가이드 & 꿀팁 열기"
+        >
+          <BookOpen size={16} />
+          <span className="btn-label">사용자 가이드</span>
         </button>
 
         {/* Settings button */}
