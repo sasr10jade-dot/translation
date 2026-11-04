@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.5rem;
   background: var(--panel-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -14,16 +14,25 @@
   gap: 1rem;
 }
 
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 1rem;
+}
+
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .brand-icon-wrapper {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-md);
@@ -42,8 +51,8 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   background: var(--accent-cyan);
   border-radius: 50%;
   border: 2px solid var(--bg-primary);
@@ -52,11 +61,11 @@
 .brand-title-row {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
 .brand-title {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
@@ -69,7 +78,7 @@
   font-weight: 800;
   background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-cyan) 100%);
   color: #fff;
-  padding: 0.15rem 0.4rem;
+  padding: 0.12rem 0.4rem;
   border-radius: var(--radius-sm);
   letter-spacing: 0.05em;
 }
@@ -84,6 +93,7 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  flex-shrink: 0;
 }
 
 .lang-select-dropdown {
@@ -131,7 +141,33 @@
 .header-status-group {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
+}
+
+/* Header Buttons */
+.header-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.header-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.header-btn.active {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--accent-primary);
+  color: #e0e7ff;
 }
 
 /* PWA Install Button */
@@ -140,14 +176,51 @@
   border: 1px solid rgba(16, 185, 129, 0.45);
   color: #6ee7b7;
   font-weight: 700;
-  padding: 0.4rem 0.85rem;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
-  animation: pulseGlow 2.5s infinite;
 }
 
 .header-btn.pwa-install-btn:hover {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%);
   color: #fff;
+}
+
+/* Guide Manual Button */
+.header-btn.guide-manual-btn {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: #c084fc;
+}
+
+.header-btn.guide-manual-btn:hover {
+  background: rgba(168, 85, 247, 0.22);
+  color: #fff;
+}
+
+/* PIP Subtitle Button */
+.header-btn.pip-btn {
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.3);
+  color: #38bdf8;
+}
+
+.header-btn.pip-btn:hover {
+  background: rgba(6, 182, 212, 0.22);
+  color: #fff;
+}
+
+.header-btn.pip-btn.active {
+  background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+  border-color: #38bdf8;
+  color: #fff;
+}
+
+.header-btn.theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fbbf24;
+}
+
+.header-btn.theme-toggle-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fef08a;
 }
 
 /* View Mode Segmented Controls */
@@ -163,9 +236,9 @@
 .mode-tab {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.65rem;
-  font-size: 0.75rem;
+  gap: 0.3rem;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
   border-radius: var(--radius-sm);
@@ -192,8 +265,8 @@
 }
 
 .scale-btn {
-  padding: 0.25rem 0.55rem;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
@@ -210,83 +283,20 @@
 }
 
 .scale-val {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--accent-cyan);
-  min-width: 36px;
+  min-width: 32px;
   text-align: center;
-}
-
-.header-btn.pip-btn {
-  background: rgba(6, 182, 212, 0.12);
-  border-color: rgba(6, 182, 212, 0.3);
-  color: #38bdf8;
-}
-
-.header-btn.pip-btn:hover {
-  background: rgba(6, 182, 212, 0.22);
-  color: #fff;
-}
-
-.header-btn.pip-btn.active {
-  background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
-  border-color: #38bdf8;
-  color: #fff;
-}
-
-.header-btn.guide-manual-btn {
-  background: rgba(168, 85, 247, 0.12);
-  border-color: rgba(168, 85, 247, 0.3);
-  color: #c084fc;
-}
-
-.header-btn.guide-manual-btn:hover {
-  background: rgba(168, 85, 247, 0.22);
-  color: #fff;
-}
-
-.header-btn.theme-toggle-btn {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fbbf24;
-}
-
-.header-btn.theme-toggle-btn:hover {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fef08a;
-}
-
-/* Header Buttons */
-.header-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.45rem 0.75rem;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--panel-border);
-  color: var(--text-secondary);
-}
-
-.header-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--text-primary);
-}
-
-.header-btn.active {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: var(--accent-primary);
-  color: #e0e7ff;
 }
 
 .engine-badge {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.35rem 0.65rem;
+  padding: 0.3rem 0.55rem;
   border-radius: var(--radius-full);
 }
 
@@ -317,9 +327,9 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  padding: 0.35rem 0.65rem;
+  padding: 0.3rem 0.55rem;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -336,87 +346,101 @@
 .counter-badge {
   background: var(--accent-primary);
   color: #ffffff;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  padding: 0.1rem 0.4rem;
+  padding: 0.1rem 0.35rem;
   border-radius: var(--radius-full);
 }
 
-@media (max-width: 768px) {
+/* ========================================================
+   Mobile Header Overhaul (폭 900px 이하 모바일 화면 전면 최적화)
+   ======================================================== */
+@media (max-width: 900px) {
   .app-header {
-    padding: 0.5rem 0.75rem;
-    gap: 0.4rem;
-    height: 56px;
-    box-sizing: border-box;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 0.45rem 0.75rem !important;
+    gap: 0.45rem !important;
+    height: auto !important;
   }
-  
+
+  /* 1행: 로고(좌) 및 핵심 아이콘(우) */
+  .header-top-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
   .header-brand {
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
   .brand-icon-wrapper {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
   }
 
   .brand-icon {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   .brand-title {
     font-size: 1.05rem;
   }
 
-  .brand-tag, .brand-subtitle, .btn-label {
-    display: none;
+  .brand-tag,
+  .brand-subtitle,
+  .btn-label,
+  .mic-status-text {
+    display: none !important;
   }
 
-  /* 모바일에서 헤더 공간을 차지하는 보조 버튼들 숨김 */
+  /* 모바일에서 헤더 공간을 잡아먹는 PC 전용 메뉴 숨김 */
   .view-mode-segmented,
   .font-scale-control,
+  .pip-btn,
   .fullscreen-btn,
   .guide-btn,
   .engine-badge {
     display: none !important;
   }
 
-  .header-lang-swap-bar {
-    margin: 0 auto;
-  }
-
-  .lang-swap-btn {
-    padding: 0.2rem 0.5rem;
-    gap: 0.35rem;
-  }
-
-  .lang-chip {
-    font-size: 0.7rem;
-    padding: 0.1rem 0.4rem;
-  }
-
-  .swap-icon-circle {
-    width: 20px;
-    height: 20px;
-  }
-
   .header-status-group {
-    gap: 0.3rem;
+    gap: 0.35rem !important;
   }
 
   .header-btn {
-    padding: 0.35rem;
-    min-width: 34px;
-    height: 34px;
-    justify-content: center;
+    padding: 0.35rem !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    justify-content: center !important;
   }
 
   .mic-status-pill {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.65rem;
+    padding: 0.25rem 0.45rem !important;
   }
 
-  .mic-status-pill span {
-    display: none;
+  /* 2행: 5개국어 선택 바 (가로 100% 핏 2단 드롭다운) */
+  .header-lang-swap-bar {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 34px 1fr !important;
+    gap: 0.35rem !important;
+    align-items: center !important;
+  }
+
+  .lang-select-dropdown {
+    width: 100% !important;
+    padding: 0.35rem 0.4rem !important;
+    font-size: 0.78rem !important;
+    text-align: center !important;
+  }
+
+  .lang-swap-icon-btn {
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 auto !important;
   }
 }
