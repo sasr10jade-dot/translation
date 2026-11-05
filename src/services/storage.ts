@@ -23,6 +23,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
     { id: '2', sourceWord: 'PR', targetWord: '풀 리퀘스트(코드 리뷰)', enabled: true },
     { id: '3', sourceWord: 'MSA', targetWord: '마이크로서비스 아키텍처', enabled: true },
   ],
+  participantPresets: ['나 (Me)', '존 (PM)', '사라 (Design)', '알렉스 (Dev)'],
+  activeSpeakerName: '나 (Me)',
   googleMeetWebhookUrl: '',
   zoomWebhookUrl: '',
   slackWebhookUrl: '',

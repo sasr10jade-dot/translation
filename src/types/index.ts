@@ -61,6 +61,8 @@ export interface TranslationRecord {
   tone: TranslationTone;
   latencyMs: number;
   isFavorite: boolean;
+  isBookmarked?: boolean; // 실시간 핵심 순간 골드 스타 북마크
+  speakerName?: string; // 다자간 회의용 맞춤 화자 라벨 (예: "존 (PM)")
 }
 
 export interface AppSettings {
@@ -77,6 +79,8 @@ export interface AppSettings {
   fontFamily: AppFontFamily; // 기본 글꼴 (noto-sans, pretendard, nanum-gothic, system)
   pushToTalk: boolean;
   glossary: GlossaryItem[];
+  participantPresets?: string[]; // 다자간 회의 참석자 프리셋
+  activeSpeakerName?: string; // 현재 활성화된 화자 이름
   googleMeetWebhookUrl: string; // Google Meet (Google Chat) 회의록 전송 웹훅 URL
   zoomWebhookUrl: string; // Zoom Team Chat 회의록 전송 웹훅 URL
   slackWebhookUrl: string; // 슬랙 채널 실시간 회의록 전송 웹훅 URL

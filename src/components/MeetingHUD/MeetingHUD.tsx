@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mic, MicOff, Maximize2, Volume2, Sparkles, Sliders, ArrowDownCircle } from 'lucide-react';
+import { Mic, MicOff, Maximize2, Sliders, ArrowDownCircle, Sparkles, Volume2, RotateCcw } from 'lucide-react';
 import { TranslationRecord, TranslationEngine, SupportedLang, TargetLang } from '../../types';
 import { normalizeMeetingUrl } from '../../utils/urlHelper';
 import './MeetingHUD.css';
@@ -18,6 +18,7 @@ interface MeetingHUDProps {
   onSpeak: (text: string) => void;
   googleMeetUrl?: string;
   zoomUrl?: string;
+  onOpenGoldenReplay?: () => void;
 }
 
 export const MeetingHUD: React.FC<MeetingHUDProps> = ({
@@ -34,6 +35,7 @@ export const MeetingHUD: React.FC<MeetingHUDProps> = ({
   onSpeak,
   googleMeetUrl,
   zoomUrl,
+  onOpenGoldenReplay,
 }) => {
   const [opacity, setOpacity] = useState(90);
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg'>('md');
@@ -139,6 +141,18 @@ export const MeetingHUD: React.FC<MeetingHUDProps> = ({
             <ArrowDownCircle size={14} />
             <span>이전 대화</span>
           </button>
+
+          {onOpenGoldenReplay && (
+            <button
+              type="button"
+              className="hud-btn replay-btn"
+              onClick={onOpenGoldenReplay}
+              title="골든 리플레이: 방금 발화 5초 되감기 & 느린 재생 (Alt + R)"
+            >
+              <RotateCcw size={13} />
+              <span>되감기</span>
+            </button>
+          )}
 
           <button
             type="button"

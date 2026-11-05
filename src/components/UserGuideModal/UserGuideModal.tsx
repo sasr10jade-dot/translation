@@ -198,6 +198,24 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
 
                   <div className="shortcut-table-row">
                     <div className="keys-wrap">
+                      <span className="key-cap">Alt</span>
+                      <span className="key-plus">+</span>
+                      <span className="key-cap">R</span>
+                    </div>
+                    <span className="action-desc">골든 리플레이: 방금 발화 5초 되감기 & 0.8x 느린 속도 다시 듣기</span>
+                  </div>
+
+                  <div className="shortcut-table-row">
+                    <div className="keys-wrap">
+                      <span className="key-cap">Alt</span>
+                      <span className="key-plus">+</span>
+                      <span className="key-cap">M</span>
+                    </div>
+                    <span className="action-desc">실시간 핵심 순간(Key Moment) 골드 스타 북마크</span>
+                  </div>
+
+                  <div className="shortcut-table-row">
+                    <div className="keys-wrap">
                       <span className="key-cap">헤더 [A-] [A+]</span>
                     </div>
                     <span className="action-desc">글자 크기 80% ~ 150% 원클릭 실시간 확대/축소 (설정에서 Noto Sans 등 글꼴 일괄 변경)</span>

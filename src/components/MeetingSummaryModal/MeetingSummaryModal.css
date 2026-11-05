@@ -201,6 +201,28 @@
   color: #6ee7b7;
 }
 
+.notion-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #f1f5f9;
+}
+
+.notion-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.docs-btn {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: #93c5fd;
+}
+
+.docs-btn:hover:not(:disabled) {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
 /* Light Theme Overrides */
 [data-theme='light'] .summary-card {
   background: #ffffff;

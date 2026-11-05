@@ -19,6 +19,7 @@ import {
   Sun,
   Moon,
   Video,
+  RotateCcw,
 } from 'lucide-react';
 import { AppSettings, AppTheme, SupportedLang, TargetLang, ViewMode } from '../../types';
 import './Header.css';
@@ -46,6 +47,7 @@ interface HeaderProps {
   onOpenSettings: () => void;
   onOpenAudioGuide: () => void;
   onOpenUserGuide: () => void;
+  onOpenGoldenReplay?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -71,6 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSettings,
   onOpenAudioGuide,
   onOpenUserGuide,
+  onOpenGoldenReplay,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -243,6 +246,19 @@ export const Header: React.FC<HeaderProps> = ({
             <Video size={15} />
             <span className="btn-label">회의 연동</span>
           </button>
+
+          {/* Golden Replay Button (Alt + R) */}
+          {onOpenGoldenReplay && (
+            <button
+              type="button"
+              className="header-btn golden-replay-btn"
+              onClick={onOpenGoldenReplay}
+              title="골든 리플레이: 방금 발화 5초 되감기 & 느린 발음 다시 듣기 (Alt + R)"
+            >
+              <RotateCcw size={15} />
+              <span className="btn-label">되감기</span>
+            </button>
+          )}
 
           {/* Engine status badge (PC only) */}
           <div className={`engine-badge ${settings.engine === 'gemini' ? 'gemini' : 'free'}`}>

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { TranslationRecord, SupportedLang, TargetLang, TranslationStatus, SpeechLangCode } from '../../types';
-import { Mic, MicOff, Volume2, Sparkles, Download, FileText, Send, Video, ExternalLink } from 'lucide-react';
+import { Mic, MicOff, Volume2, Sparkles, Download, FileText, Send, Video, ExternalLink, RotateCcw, Star, Users } from 'lucide-react';
 import { normalizeMeetingUrl } from '../../utils/urlHelper';
+import { SmartReplyBar } from '../SmartReply/SmartReplyBar';
 import './MeetingStream.css';
 
 interface MeetingStreamProps {
@@ -23,6 +24,13 @@ interface MeetingStreamProps {
   onExport: (format: 'txt' | 'json') => void;
   googleMeetUrl?: string;
   zoomUrl?: string;
+  onOpenGoldenReplay?: () => void;
+  apiKey?: string;
+  geminiModel?: string;
+  onToggleBookmark?: (id: string) => void;
+  activeSpeaker?: string;
+  onSelectSpeaker?: (speaker: string) => void;
+  participants?: string[];
 }
 
 export const MeetingStream: React.FC<MeetingStreamProps> = ({
@@ -42,6 +50,13 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
   onExport,
   googleMeetUrl,
   zoomUrl,
+  onOpenGoldenReplay,
+  apiKey,
+  geminiModel,
+  onToggleBookmark,
+  activeSpeaker = '나 (Me)',
+  onSelectSpeaker,
+  participants = ['나 (Me)', '존 (PM)', '사라 (Design)', '알렉스 (Dev)'],
 }) => {
   const bottomAnchorRef = useRef<HTMLDivElement | null>(null);
 
@@ -97,6 +112,20 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
             </button>
           </div>
 
+          {/* Golden Replay (Alt + R) */}
+          {onOpenGoldenReplay && (
+            <button
+              type="button"
+              className="stream-tool-btn replay-btn"
+              onClick={onOpenGoldenReplay}
+              disabled={records.length === 0}
+              title="골든 리플레이: 방금 발화 5초 되감기 & 느린 발음 다시 듣기 (Alt + R)"
+            >
+              <RotateCcw size={14} />
+              <span>되감기</span>
+            </button>
+          )}
+
           {/* AI 3줄 요약 & To-do 추출 버튼 */}
           <button
             type="button"
@@ -122,6 +151,27 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
         </div>
       </div>
 
+      {/* Multi-participant Speaker Selector Row */}
+      <div className="stream-participants-bar">
+        <div className="participants-label">
+          <Users size={13} />
+          <span>발화자:</span>
+        </div>
+        <div className="participants-chips">
+          {participants.map((name) => (
+            <button
+              key={name}
+              type="button"
+              className={`participant-chip ${activeSpeaker === name ? 'active' : ''}`}
+              onClick={() => onSelectSpeaker?.(name)}
+              title={`현재 발화자를 [${name}]으로 전환`}
+            >
+              <span>{name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Stream Message Feed (Timeline) */}
       <div className="stream-feed">
         {records.length === 0 && !interimText && (
@@ -134,12 +184,34 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
         )}
 
         {records.map((r) => (
-          <div key={r.id} className={`stream-bubble-pair ${r.speaker === 'me' ? 'speaker-me' : 'speaker-partner'}`}>
+          <div
+            key={r.id}
+            className={`stream-bubble-pair ${r.speaker === 'me' ? 'speaker-me' : 'speaker-partner'} ${
+              r.isBookmarked ? 'bookmarked' : ''
+            }`}
+          >
             <div className="bubble-header">
               <span className={`bubble-speaker ${r.speaker}`}>
-                {r.speaker === 'me' ? '👤 나 (Me)' : '👥 상대방 (Partner)'} · {r.sourceLang.toUpperCase()} ➔ {r.targetLang.toUpperCase()}
+                {r.speakerName || (r.speaker === 'me' ? '👤 나 (Me)' : '👥 상대방 (Partner)')} · {r.sourceLang.toUpperCase()} ➔ {r.targetLang.toUpperCase()}
               </span>
-              <span className="bubble-time">{formatTime(r.timestamp)}</span>
+              <div className="bubble-header-actions">
+                {onToggleBookmark && (
+                  <button
+                    type="button"
+                    className={`bubble-star-btn ${r.isBookmarked ? 'active' : ''}`}
+                    onClick={() => onToggleBookmark(r.id)}
+                    title={r.isBookmarked ? '핵심 중요 안건 북마크 해제' : '⭐ 핵심 중요 안건 북마크 (Alt + M)'}
+                  >
+                    <Star
+                      size={13}
+                      fill={r.isBookmarked ? '#f59e0b' : 'none'}
+                      color={r.isBookmarked ? '#f59e0b' : 'currentColor'}
+                    />
+                    <span>{r.isBookmarked ? '중요 안건' : ''}</span>
+                  </button>
+                )}
+                <span className="bubble-time">{formatTime(r.timestamp)}</span>
+              </div>
             </div>
 
             {/* Original Source Bubble */}
@@ -198,6 +270,23 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
 
         <div ref={bottomAnchorRef} />
       </div>
+
+      {/* AI Smart Reply Assistant (Partner contextual quick replies) */}
+      {records.length > 0 && (
+        <div style={{ padding: '0 0.5rem 0.5rem 0.5rem' }}>
+          <SmartReplyBar
+            partnerText={
+              (records.find((r) => r.speaker === 'partner') || records[0]).sourceLang === 'ko'
+                ? (records.find((r) => r.speaker === 'partner') || records[0]).translatedText
+                : (records.find((r) => r.speaker === 'partner') || records[0]).sourceText
+            }
+            apiKey={apiKey}
+            modelName={geminiModel}
+            onSelectReply={(text) => onTextChange(text)}
+            onSpeak={(text) => onSpeak(text)}
+          />
+        </div>
+      )}
 
       {/* Stream Input Controller */}
       <div className="stream-input-bar">

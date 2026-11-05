@@ -126,9 +126,72 @@
   color: #fff;
 }
 
+.stream-tool-btn.replay-btn {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.stream-tool-btn.replay-btn:hover:not(:disabled) {
+  background: #f59e0b;
+  color: #000000;
+}
+
 .sparkle-anim {
   animation: spin 6s linear infinite;
   color: #818cf8;
+}
+
+/* Multi-participant Bar */
+.stream-participants-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 1.25rem;
+  background: rgba(0, 0, 0, 0.18);
+  border-bottom: 1px solid var(--panel-border);
+  overflow-x: auto;
+}
+
+.participants-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.participants-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.participant-chip {
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.participant-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.participant-chip.active {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--accent-primary);
+  color: #c7d2fe;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
 }
 
 /* Timeline Feed */
@@ -190,6 +253,45 @@
 
 .stream-bubble-pair.speaker-partner {
   border-left: 4px solid var(--accent-cyan);
+}
+
+/* Bookmarked Key Moment Card */
+.stream-bubble-pair.bookmarked {
+  border: 1.5px solid #f59e0b !important;
+  background: rgba(245, 158, 11, 0.08) !important;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2) !important;
+}
+
+.bubble-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bubble-star-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bubble-star-btn:hover {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.bubble-star-btn.active {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #fbbf24;
 }
 
 .bubble-speaker.me {

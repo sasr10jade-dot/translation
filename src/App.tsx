@@ -9,6 +9,7 @@ import { MeetingSummaryModal } from './components/MeetingSummaryModal/MeetingSum
 import { AudioGuideModal } from './components/AudioGuide/AudioGuideModal';
 import { UserGuideModal } from './components/UserGuideModal/UserGuideModal';
 import { PWAInstallModal } from './components/PWAInstallModal/PWAInstallModal';
+import { GoldenReplayModal } from './components/GoldenReplay/GoldenReplayModal';
 import { MobileBottomBar } from './components/MobileBottomBar/MobileBottomBar';
 import { SpeechRecognitionService } from './services/speechRecognition';
 import { AudioVisualizerService } from './services/audioVisualizer';
@@ -42,6 +43,7 @@ export function App() {
 
   // Speaker Role: 'me' vs 'partner'
   const [speakerRole, setSpeakerRole] = useState<SpeakerRole>('partner');
+  const [activeSpeaker, setActiveSpeaker] = useState<string>(settings.activeSpeakerName || '나 (Me)');
 
   // Font Scale state (0.8 ~ 1.5)
   const [fontScale, setFontScale] = useState<number>(settings.fontScale || 1.0);
@@ -72,6 +74,7 @@ export function App() {
   // Modal / Drawer state
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showGoldenReplay, setShowGoldenReplay] = useState(false);
   const [showAudioGuide, setShowAudioGuide] = useState(false);
   const [showPWAModal, setShowPWAModal] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
@@ -299,6 +302,8 @@ export function App() {
             targetLang: effectiveTgt,
             sourceType,
             speaker: speakerRole,
+            speakerName: activeSpeaker,
+            isBookmarked: false,
             nuanceTip: tip,
             engine: result.engine,
             tone: settings.tone,
@@ -447,6 +452,20 @@ export function App() {
           });
         }
       }
+
+      // Alt + R: Golden Replay
+      if (e.altKey && (e.code === 'KeyR' || e.key.toLowerCase() === 'r')) {
+        e.preventDefault();
+        setShowGoldenReplay(true);
+      }
+
+      // Alt + M: Bookmark latest record (Key Moment)
+      if (e.altKey && (e.code === 'KeyM' || e.key.toLowerCase() === 'm')) {
+        e.preventDefault();
+        if (records.length > 0) {
+          handleToggleBookmark(records[0].id);
+        }
+      }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -559,6 +578,26 @@ export function App() {
     );
   };
 
+  const handleToggleBookmark = (id: string) => {
+    setRecords((prev) =>
+      prev.map((r) => {
+        if (r.id === id) {
+          const next = !r.isBookmarked;
+          showToast(next ? '⭐ 중요 안건(핵심 발화)으로 북마크되었습니다.' : '북마크가 해제되었습니다.');
+          return { ...r, isBookmarked: next };
+        }
+        return r;
+      })
+    );
+  };
+
+  const handleSelectSpeaker = (name: string) => {
+    setActiveSpeaker(name);
+    const isMe = name.includes('나') || name.toLowerCase().includes('me');
+    setSpeakerRole(isMe ? 'me' : 'partner');
+    showToast(`현재 발화자가 [${name}]으로 전환되었습니다.`);
+  };
+
   const handleDeleteRecord = (id: string) => {
     setRecords((prev) => prev.filter((r) => r.id !== id));
     showToast('기록이 삭제되었습니다.');
@@ -618,6 +657,7 @@ export function App() {
         onOpenSettings={() => setShowSettings(true)}
         onOpenAudioGuide={() => setShowAudioGuide(true)}
         onOpenUserGuide={() => setShowUserGuide(true)}
+        onOpenGoldenReplay={() => setShowGoldenReplay(true)}
       />
 
       {/* Main Workspace (displayed in normal & wide modes) */}
@@ -679,6 +719,13 @@ export function App() {
             onExport={handleExportHistory}
             googleMeetUrl={settings.googleMeetUrl}
             zoomUrl={settings.zoomUrl}
+            onOpenGoldenReplay={() => setShowGoldenReplay(true)}
+            apiKey={settings.geminiApiKey}
+            geminiModel={settings.geminiModel}
+            onToggleBookmark={handleToggleBookmark}
+            activeSpeaker={activeSpeaker}
+            onSelectSpeaker={handleSelectSpeaker}
+            participants={settings.participantPresets}
           />
         </main>
       )}
@@ -699,6 +746,7 @@ export function App() {
           onSpeak={handleSpeak}
           googleMeetUrl={settings.googleMeetUrl}
           zoomUrl={settings.zoomUrl}
+          onOpenGoldenReplay={() => setShowGoldenReplay(true)}
         />
       )}
 
@@ -715,6 +763,19 @@ export function App() {
           onClose={() => setShowHistory(false)}
         />
       )}
+
+      {/* Golden Replay Modal (Alt + R) */}
+      <GoldenReplayModal
+        isOpen={showGoldenReplay}
+        records={records}
+        onClose={() => setShowGoldenReplay(false)}
+        onSpeak={(text, rate) => {
+          setIsSpeaking(true);
+          synthesizerService.speak(text, targetLang, rate || 0.85, () => {
+            setIsSpeaking(false);
+          });
+        }}
+      />
 
       {/* Settings Modal */}
       <SettingsModal

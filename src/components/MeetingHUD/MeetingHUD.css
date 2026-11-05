@@ -195,6 +195,18 @@
   color: #c7d2fe;
 }
 
+.hud-btn.replay-btn {
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.hud-btn.replay-btn:hover {
+  background: rgba(245, 158, 11, 0.28);
+  border-color: #f59e0b;
+  color: #ffffff;
+}
+
 /* Content Area */
 .hud-content-area {
   display: flex;

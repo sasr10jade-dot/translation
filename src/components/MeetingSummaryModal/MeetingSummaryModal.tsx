@@ -26,6 +26,8 @@ export const MeetingSummaryModal: React.FC<MeetingSummaryModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState<MeetingSummary | null>(null);
   const [copied, setCopied] = useState(false);
+  const [notionCopied, setNotionCopied] = useState(false);
+  const [docsCopied, setDocsCopied] = useState(false);
   const [googleMeetSending, setGoogleMeetSending] = useState(false);
   const [googleMeetSuccess, setGoogleMeetSuccess] = useState(false);
   const [zoomSending, setZoomSending] = useState(false);
@@ -231,6 +233,17 @@ ${dialogText}`;
     if (!summary) return '';
     const meetingUrl = settings.googleMeetUrl || settings.zoomUrl;
     const meetingLine = meetingUrl ? `회의 링크: ${meetingUrl}\n` : '';
+    const bookmarked = records.filter((r) => r.isBookmarked);
+    const bookmarkedBlock =
+      bookmarked.length > 0
+        ? `\n## ⭐ 실시간 북마크된 중요 발화\n${bookmarked
+            .map(
+              (r) =>
+                `- **[${r.speakerName || (r.speaker === 'me' ? '나' : '상대방')}]**: "${r.sourceText}"\n  ➔ *번역:* ${r.translatedText}`
+            )
+            .join('\n')}\n`
+        : '';
+
     return `# 📋 화상 회의록 요약 보고서
 일시: ${new Date().toLocaleString('ko-KR')}
 ${meetingLine}총 발화 수: ${records.length}건
@@ -240,9 +253,90 @@ ${summary.keyPoints.map((p, i) => `${i + 1}. ${p}`).join('\n')}
 
 ## ✅ 후속 조치 사항 (Action Items / To-do)
 ${summary.actionItems.map((a) => `- [ ] ${a}`).join('\n')}
-
+${bookmarkedBlock}
 ---
 생성: LiveLingua KR Meeting AI Assistant`;
+  };
+
+  const handleCopyNotion = async () => {
+    if (!summary) return;
+    const meetingUrl = settings.googleMeetUrl || settings.zoomUrl;
+    const bookmarked = records.filter((r) => r.isBookmarked);
+
+    const notionMd = `# 📋 화상 회의록 요약 보고서
+> 💡 **일시:** ${new Date().toLocaleString('ko-KR')} | **총 발화:** ${records.length}건 ${meetingUrl ? `| **회의 링크:** ${meetingUrl}` : ''}
+
+## 📌 핵심 논의 안건 (3줄 요약)
+${summary.keyPoints.map((p, i) => `${i + 1}. ${p}`).join('\n')}
+
+## ✅ 후속 조치 사항 (Action Items)
+${summary.actionItems.map((a) => `- [ ] ${a}`).join('\n')}
+${bookmarked.length > 0 ? `\n## ⭐ 실시간 북마크된 중요 안건\n${bookmarked.map((r) => `> ⭐ **${r.speakerName || (r.speaker === 'me' ? '나' : '상대방')}**: "${r.sourceText}"\n> ➔ *${r.translatedText}*`).join('\n>\n')}\n` : ''}
+---
+*LiveLingua KR 화상 회의 어시스턴트 자동 발행*`;
+
+    try {
+      await navigator.clipboard.writeText(notionMd);
+      setNotionCopied(true);
+      setTimeout(() => setNotionCopied(false), 2000);
+    } catch {}
+  };
+
+  const handleCopyGoogleDocs = async () => {
+    if (!summary) return;
+    const meetingUrl = settings.googleMeetUrl || settings.zoomUrl;
+    const bookmarked = records.filter((r) => r.isBookmarked);
+
+    const htmlContent = `
+      <div style="font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; color: #1e293b;">
+        <h1 style="color: #4f46e5; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">📋 화상 회의록 요약 보고서</h1>
+        <p style="background: #f1f5f9; padding: 10px 14px; border-radius: 6px; font-size: 14px;">
+          <strong>일시:</strong> ${new Date().toLocaleString('ko-KR')} | <strong>총 발화:</strong> ${records.length}건
+          ${meetingUrl ? `<br><strong>회의 링크:</strong> <a href="${meetingUrl}">${meetingUrl}</a>` : ''}
+        </p>
+        <h2 style="color: #0f172a; margin-top: 20px;">📌 핵심 논의 안건 (3줄 요약)</h2>
+        <ol style="padding-left: 20px;">
+          ${summary.keyPoints.map((p) => `<li style="margin-bottom: 6px;">${p}</li>`).join('')}
+        </ol>
+        <h2 style="color: #0f172a; margin-top: 20px;">✅ 후속 조치 사항 (Action Items)</h2>
+        <ul style="list-style-type: none; padding-left: 0;">
+          ${summary.actionItems.map((a) => `<li style="margin-bottom: 6px;">🔲 ${a}</li>`).join('')}
+        </ul>
+        ${
+          bookmarked.length > 0
+            ? `
+          <h2 style="color: #d97706; margin-top: 20px;">⭐ 실시간 북마크된 중요 발화</h2>
+          <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 4px;">
+            ${bookmarked
+              .map(
+                (r) =>
+                  `<p style="margin: 6px 0;"><strong>${r.speakerName || (r.speaker === 'me' ? '나' : '상대방')}:</strong> ${r.sourceText}<br><span style="color: #059669;">➔ ${r.translatedText}</span></p>`
+              )
+              .join('')}
+          </div>
+        `
+            : ''
+        }
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin-top: 24px;">
+        <p style="font-size: 12px; color: #94a3b8;">생성: LiveLingua KR Meeting AI Assistant</p>
+      </div>
+    `;
+
+    try {
+      const blobHtml = new Blob([htmlContent], { type: 'text/html' });
+      const blobText = new Blob([getFullMarkdown()], { type: 'text/plain' });
+      const item = new ClipboardItem({
+        'text/html': blobHtml,
+        'text/plain': blobText,
+      });
+      await navigator.clipboard.write([item]);
+      setDocsCopied(true);
+      setTimeout(() => setDocsCopied(false), 2000);
+    } catch {
+      await navigator.clipboard.writeText(getFullMarkdown());
+      setDocsCopied(true);
+      setTimeout(() => setDocsCopied(false), 2000);
+    }
   };
 
   const handleCopy = async () => {
@@ -380,6 +474,28 @@ ${summary.actionItems.map((a) => `- [ ] ${a}`).join('\n')}
             >
               {slackSuccess ? <Check size={14} /> : <Send size={14} />}
               <span>{slackSuccess ? '슬랙 전송 완료!' : slackSending ? '전송 중...' : '슬랙 전송'}</span>
+            </button>
+
+            <button
+              type="button"
+              className="modal-btn notion-btn"
+              onClick={handleCopyNotion}
+              disabled={!summary || loading}
+              title="노션(Notion)에 붙여넣기 좋은 서식으로 복사"
+            >
+              {notionCopied ? <Check size={14} /> : <FileText size={14} />}
+              <span>{notionCopied ? '노션 복사됨!' : 'Notion 복사'}</span>
+            </button>
+
+            <button
+              type="button"
+              className="modal-btn docs-btn"
+              onClick={handleCopyGoogleDocs}
+              disabled={!summary || loading}
+              title="구글 닥스(Google Docs)나 Word에 서식 그대로 붙여넣을 수 있는 리치 텍스트 복사"
+            >
+              {docsCopied ? <Check size={14} /> : <Copy size={14} />}
+              <span>{docsCopied ? 'Docs 복사됨!' : 'Docs 서식 복사'}</span>
             </button>
 
             <button
