@@ -359,7 +359,6 @@
   .font-scale-control,
   .pip-btn,
   .fullscreen-btn,
-  .guide-btn,
   .engine-badge {
     display: none !important;
   }
@@ -395,5 +394,11 @@
     width: 32px !important;
     height: 32px !important;
     margin: 0 auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-guide-btn {
+    display: none !important;
   }
 }

@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { AudioVisualizerService } from '../../services/audioVisualizer';
+import { normalizeMeetingUrl } from '../../utils/urlHelper';
 import './AudioGuideModal.css';
 
 interface AudioGuideModalProps {
@@ -220,7 +221,7 @@ export const AudioGuideModal: React.FC<AudioGuideModalProps> = ({
                     <button
                       type="button"
                       className="platform-btn meet-btn"
-                      onClick={() => window.open(googleMeetUrl || 'https://meet.google.com/new', '_blank')}
+                      onClick={() => window.open(normalizeMeetingUrl(googleMeetUrl, 'https://meet.google.com/new'), '_blank')}
                       title={googleMeetUrl ? '등록된 내 회의실 바로 열기' : '새 Google Meet 회의 열기'}
                     >
                       <ExternalLink size={13} />
@@ -265,7 +266,7 @@ export const AudioGuideModal: React.FC<AudioGuideModalProps> = ({
                     <button
                       type="button"
                       className="platform-btn zoom-btn"
-                      onClick={() => window.open(zoomUrl || 'https://zoom.us/join', '_blank')}
+                      onClick={() => window.open(normalizeMeetingUrl(zoomUrl, 'https://zoom.us/join'), '_blank')}
                       title={zoomUrl ? '등록된 내 Zoom 회의실 바로 입장' : 'Zoom 회의 참가'}
                     >
                       <ExternalLink size={13} />

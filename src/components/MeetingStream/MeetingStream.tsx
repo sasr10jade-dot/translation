@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { TranslationRecord, SupportedLang, TargetLang, TranslationStatus, SpeechLangCode } from '../../types';
 import { Mic, MicOff, Volume2, Sparkles, Download, FileText, Send, Video, ExternalLink } from 'lucide-react';
+import { normalizeMeetingUrl } from '../../utils/urlHelper';
 import './MeetingStream.css';
 
 interface MeetingStreamProps {
@@ -79,7 +80,7 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
             <button
               type="button"
               className="stream-platform-chip meet"
-              onClick={() => window.open(googleMeetUrl || 'https://meet.google.com/new', '_blank')}
+              onClick={() => window.open(normalizeMeetingUrl(googleMeetUrl, 'https://meet.google.com/new'), '_blank')}
               title={googleMeetUrl ? `Google Meet 내 회의실 (${googleMeetUrl}) 열기` : '새 Google Meet 회의 생성 및 열기'}
             >
               <Video size={13} />
@@ -88,7 +89,7 @@ export const MeetingStream: React.FC<MeetingStreamProps> = ({
             <button
               type="button"
               className="stream-platform-chip zoom"
-              onClick={() => window.open(zoomUrl || 'https://zoom.us/join', '_blank')}
+              onClick={() => window.open(normalizeMeetingUrl(zoomUrl, 'https://zoom.us/join'), '_blank')}
               title={zoomUrl ? `Zoom 내 회의실 (${zoomUrl}) 열기` : 'Zoom 회의 참가하기'}
             >
               <ExternalLink size={13} />

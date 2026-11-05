@@ -44,6 +44,10 @@ export class SpeechSynthesizerService {
 
     window.speechSynthesis.cancel();
 
+    if (this.voices.length === 0) {
+      this.loadVoices();
+    }
+
     const langCode = LANG_TO_BCP47[targetLang as TargetLang] || targetLang || 'ko-KR';
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = langCode;

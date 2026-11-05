@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mic, MicOff, Maximize2, Volume2, Sparkles, Sliders, ArrowDownCircle } from 'lucide-react';
 import { TranslationRecord, TranslationEngine, SupportedLang, TargetLang } from '../../types';
+import { normalizeMeetingUrl } from '../../utils/urlHelper';
 import './MeetingHUD.css';
 
 interface MeetingHUDProps {
@@ -74,7 +75,7 @@ export const MeetingHUD: React.FC<MeetingHUDProps> = ({
             <button
               type="button"
               className="hud-link-chip meet"
-              onClick={() => window.open(googleMeetUrl || 'https://meet.google.com', '_blank')}
+              onClick={() => window.open(normalizeMeetingUrl(googleMeetUrl, 'https://meet.google.com'), '_blank')}
               title={googleMeetUrl ? `Google Meet 내 회의실 (${googleMeetUrl}) 열기` : 'Google Meet 열기'}
             >
               Meet
@@ -82,7 +83,7 @@ export const MeetingHUD: React.FC<MeetingHUDProps> = ({
             <button
               type="button"
               className="hud-link-chip zoom"
-              onClick={() => window.open(zoomUrl || 'https://zoom.us/join', '_blank')}
+              onClick={() => window.open(normalizeMeetingUrl(zoomUrl, 'https://zoom.us/join'), '_blank')}
               title={zoomUrl ? `Zoom 내 회의실 (${zoomUrl}) 열기` : 'Zoom 회의 열기'}
             >
               Zoom
